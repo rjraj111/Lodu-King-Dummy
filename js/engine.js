@@ -1,6 +1,7 @@
 /**
  * Core Ludo King Game Engine
- * Manages 15x15 board coordinates, player states, token movements, rules, animations, and AI.
+ * Matches exact board coordinates from official Ludo King reference:
+ * Top-Left: RED, Top-Right: GREEN, Bottom-Right: YELLOW, Bottom-Left: BLUE
  */
 
 // 52 Common Outer Circuit Tiles (x, y) coordinates on 15x15 board (0..14)
@@ -83,7 +84,7 @@ const HOME_CORRIDORS = {
     { x: 13, y: 7 }, { x: 12, y: 7 }, { x: 11, y: 7 }, { x: 10, y: 7 }, { x: 9, y: 7 }
   ],
   blue: [
-    { x: 7, y: 13 }, { x: 7, y: 12 }, { x: 7, y: 11 }, { x: 7, y: 10 }, { x: 9, y: 9 }
+    { x: 7, y: 13 }, { x: 7, y: 12 }, { x: 7, y: 11 }, { x: 7, y: 10 }, { x: 7, y: 9 }
   ]
 };
 
@@ -95,23 +96,24 @@ const FINISH_GOALS = {
   blue:   { x: 7.0, y: 7.8 }
 };
 
-// Base Yard Slot Positions (step -1)
+// Base Yard Slot Positions (step -1) matching exact layout in Image 1:
+// Top-Left: RED | Top-Right: GREEN | Bottom-Right: YELLOW | Bottom-Left: BLUE
 const BASE_SLOTS = {
   red: [
-    { x: 1.8, y: 10.8 }, { x: 3.8, y: 10.8 },
-    { x: 1.8, y: 12.8 }, { x: 3.8, y: 12.8 }
-  ],
-  green: [
     { x: 1.8, y: 1.8 }, { x: 3.8, y: 1.8 },
     { x: 1.8, y: 3.8 }, { x: 3.8, y: 3.8 }
   ],
-  yellow: [
+  green: [
     { x: 10.8, y: 1.8 }, { x: 12.8, y: 1.8 },
     { x: 10.8, y: 3.8 }, { x: 12.8, y: 3.8 }
   ],
-  blue: [
+  yellow: [
     { x: 10.8, y: 10.8 }, { x: 12.8, y: 10.8 },
     { x: 10.8, y: 12.8 }, { x: 12.8, y: 12.8 }
+  ],
+  blue: [
+    { x: 1.8, y: 10.8 }, { x: 3.8, y: 10.8 },
+    { x: 1.8, y: 12.8 }, { x: 3.8, y: 12.8 }
   ]
 };
 
@@ -161,6 +163,7 @@ class LudoEngine {
     this.onDiceRollAnim = null;
     this.onTokenMoveStep = null;
     this.onWinnerDeclared = null;
+    this.onTimerTick = null;
   }
 
   getCurrentPlayer() {
@@ -194,7 +197,25 @@ class LudoEngine {
     return { x: 7, y: 7 };
   }
 
-  startNewGame() {
+  startNewGame(gameMode = 'vs_computer') {
+    if (gameMode === 'vs_computer') {
+      this.players.red.isAI = false;
+      this.players.green.isAI = true;
+      this.players.yellow.isAI = true;
+      this.players.blue.isAI = true;
+    } else if (gameMode === 'pass_n_play') {
+      this.players.red.isAI = false;
+      this.players.green.isAI = false;
+      this.players.yellow.isAI = false;
+      this.players.blue.isAI = false;
+    } else {
+      // online / custom
+      this.players.red.isAI = false;
+      this.players.green.isAI = true;
+      this.players.yellow.isAI = true;
+      this.players.blue.isAI = true;
+    }
+
     this.playersOrder.forEach(color => {
       this.players[color].tokens.forEach(t => {
         t.step = -1;
@@ -256,7 +277,7 @@ class LudoEngine {
 
     if (validTokens.length === 0) {
       console.log(`[Engine] No valid moves for ${currentPlayer} with roll ${roll}`);
-      // If rolled 6 with no moves (rare/blocked), gets another roll if < 3 sixes
+      // If rolled 6 with no moves, gets another roll if < 3 sixes
       if (roll === 6 && this.consecutiveSixCount < 3) {
         this.turnState = 'WAITING_FOR_ROLL';
         this._startTurnTimer();

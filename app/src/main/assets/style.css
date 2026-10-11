@@ -1,33 +1,32 @@
 /* ============================================================
    LUDO KING AUTHENTIC DESIGN SYSTEM & STYLES
-   Colors: Red #E52521, Green #009E49, Yellow #FFC20E, Blue #0072CE
+   Exact recreation of Ludo King Lobby (Image 2) and Board (Image 1)
    ============================================================ */
 
 :root {
   --color-red: #E52521;
   --color-red-dark: #A9100D;
-  --color-red-light: #FF5A57;
+  --color-red-ring: #B22222;
 
   --color-green: #009E49;
   --color-green-dark: #00662F;
-  --color-green-light: #34C759;
+  --color-green-ring: #0E6B38;
 
   --color-yellow: #FFC20E;
-  --color-yellow-dark: #D49B00;
-  --color-yellow-light: #FFE066;
+  --color-yellow-dark: #B8860B;
+  --color-yellow-ring: #996515;
 
   --color-blue: #0072CE;
   --color-blue-dark: #004B8C;
-  --color-blue-light: #4DA1FF;
+  --color-blue-ring: #1A5F96;
 
-  --wood-dark: #1E0F07;
-  --wood-medium: #3A1E0E;
-  --wood-light: #5A3118;
-  --wood-border: #6B3E1F;
+  --lobby-blue-dark: #0A1B44;
+  --lobby-blue-mid: #0E296D;
+  --lobby-blue-bright: #1E4CB8;
+
   --gold-primary: #FFD700;
   --gold-glow: #FFA500;
-  --board-bg: #FFFFFF;
-  --cell-border: #222222;
+  --gold-border: #D4AF37;
 
   --font-game: 'Lilita One', cursive, sans-serif;
   --font-ui: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -43,7 +42,7 @@
 
 body {
   font-family: var(--font-ui);
-  background: radial-gradient(circle at center, #1b263b 0%, #0d1b2a 100%);
+  background: #081226;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -54,125 +53,535 @@ body {
   touch-action: manipulation;
 }
 
-/* App Container */
-.game-container {
+/* App Container (Mobile Aspect Ratio & Framing) */
+.mobile-app-frame {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 20%, #153380 0%, #0A1B44 65%, #050D24 100%);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+}
+
+/* ============================================================
+   SCREEN 1: AUTHENTIC LUDO KING LOBBY (Image 2)
+   ============================================================ */
+.lobby-screen {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-image: 
+    radial-gradient(circle at 50% 15%, rgba(30, 76, 184, 0.6) 0%, transparent 60%),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0, rgba(255, 255, 255, 0.02) 20px, transparent 20px, transparent 40px);
+  padding-bottom: 74px; /* Space for bottom nav */
+}
+
+/* Top Header Bar */
+.lobby-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, #071536 0%, #0c235b 100%);
+  border-bottom: 2px solid #1E4CB8;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  z-index: 10;
+}
+
+.profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  cursor: pointer;
+}
+
+.avatar-frame {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+  padding: 2.5px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  position: relative;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background: #111;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="15" r="8" fill="%23FFD700"/><path d="M8 35c0-8 6-12 12-12s12 4 12 12" fill="%23FFD700"/></svg>');
+  background-size: cover;
+  background-position: center;
+}
+
+.profile-level-star {
+  position: absolute;
+  bottom: -4px;
+  left: -4px;
+  width: 18px;
+  height: 18px;
+  background: #FFD700;
+  border: 1.5px solid #000;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lobby-icons-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-icon-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #FFD700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* Currency Counters */
+.currency-pill {
+  display: flex;
+  align-items: center;
+  background: #061129;
+  border: 1.5px solid #1E4CB8;
+  border-radius: 16px;
+  padding: 3px 8px 3px 6px;
+  gap: 4px;
+  font-family: var(--font-game);
+  font-size: 0.82rem;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+}
+
+.currency-icon {
+  font-size: 0.95rem;
+}
+
+.currency-add {
+  background: #00E676;
+  color: #000;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 2px;
+}
+
+/* Side Promo Banners */
+.lobby-banners-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+.promo-tag {
+  background: linear-gradient(135deg, #1E4CB8 0%, #0A1B44 100%);
+  border: 1.5px solid var(--gold-primary);
+  border-radius: 10px;
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  cursor: pointer;
+  animation: promoPulse 2.5s infinite alternate ease-in-out;
+}
+
+@keyframes promoPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.04); }
+}
+
+.promo-title {
+  font-family: var(--font-game);
+  color: #FFD700;
+  font-size: 0.78rem;
+}
+
+.promo-sub {
+  font-size: 0.6rem;
+  color: #FFF;
+}
+
+/* Center 3D Ludo King Branding (Image 2) */
+.lobby-hero-brand {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin: 6px 0 16px;
+  position: relative;
+}
+
+.hero-crown {
+  width: 58px;
+  height: 44px;
+  filter: drop-shadow(0 4px 10px rgba(255, 215, 0, 0.7));
+  margin-bottom: -10px;
+  z-index: 2;
+  animation: crownBob 2s infinite ease-in-out alternate;
+}
+
+@keyframes crownBob {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+/* L-U-D-O 3D Blocks */
+.ludo-3d-letters {
+  display: flex;
+  gap: 4px;
+  z-index: 1;
+}
+
+.ludo-letter-block {
+  width: 44px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-game);
+  font-size: 2.1rem;
+  color: #FFFFFF;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 6px 0 rgba(0,0,0,0.4),
+    inset 0 3px 2px rgba(255,255,255,0.7),
+    0 8px 12px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.block-l { background: linear-gradient(180deg, #00C6FF 0%, #0072CE 100%); }
+.block-u { background: linear-gradient(180deg, #FF5252 0%, #E52521 100%); }
+.block-d { background: linear-gradient(180deg, #4CAF50 0%, #009E49 100%); }
+.block-o { background: linear-gradient(180deg, #FFEB3B 0%, #FFC20E 100%); color: #111; }
+
+.hero-king-text {
+  font-family: var(--font-game);
+  font-size: 1.1rem;
+  color: #FFD700;
+  letter-spacing: 2px;
+  margin-top: -6px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(255,215,0,0.6);
+}
+
+/* Mini 3D Perspective Board with Standing Pawns */
+.hero-mini-board-stage {
+  width: 170px;
+  height: 60px;
+  margin-top: -6px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-board-graphic {
+  width: 130px;
+  height: 52px;
+  background: radial-gradient(circle, #255ED9 0%, #0A1C47 80%);
+  border: 2px solid #FFD700;
+  border-radius: 10px;
+  transform: perspective(300px) rotateX(35deg);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-dice-cube {
+  width: 22px;
+  height: 22px;
+  background: #FFF;
+  border-radius: 4px;
+  border: 1px solid #111;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+}
+
+/* 4 MAIN GAME MODE BUTTONS (Image 2 - 2x2 Grid) */
+.lobby-modes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 14px;
+  margin-bottom: 12px;
+}
+
+.mode-card {
+  background: linear-gradient(180deg, #FFD700 0%, #FF9900 100%);
+  border-radius: 16px;
+  padding: 4px;
+  box-shadow: 
+    0 6px 14px rgba(0, 0, 0, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.mode-card:active {
+  transform: scale(0.96);
+  filter: brightness(1.1);
+}
+
+.mode-card-inner {
+  background: linear-gradient(180deg, #184BBF 0%, #0C286D 100%);
+  border-radius: 12px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 86px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.mode-icon {
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.mode-title {
+  font-family: var(--font-game);
+  font-size: 0.95rem;
+  color: #FFFFFF;
+  letter-spacing: 0.4px;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.mode-subtitle {
+  font-size: 0.62rem;
+  color: #00E5FF;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* Interactive Middle Banners */
+.lobby-extra-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 6px 14px;
+  gap: 8px;
+}
+
+.tournament-badge {
+  background: linear-gradient(135deg, #FF9900 0%, #CC6600 100%);
+  border: 1.5px solid #FFD700;
+  border-radius: 20px;
+  padding: 6px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-game);
+  font-size: 0.85rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  cursor: pointer;
+}
+
+.claim-mission-bar {
+  margin: 8px 14px;
+  background: linear-gradient(90deg, #102660 0%, #1D4DB5 50%, #102660 100%);
+  border: 1.5px solid #FFD700;
+  border-radius: 24px;
+  padding: 6px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.claim-mission-text {
+  font-family: var(--font-game);
+  font-size: 0.85rem;
+  color: #FFF;
+}
+
+.claim-btn {
+  background: linear-gradient(180deg, #FFEB3B 0%, #FFC20E 100%);
+  color: #000;
+  border: none;
+  border-radius: 14px;
+  padding: 3px 12px;
+  font-family: var(--font-game);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* Bottom Navigation Bar (Image 2) */
+.lobby-bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  max-width: 680px;
+  height: 64px;
+  background: linear-gradient(180deg, #091C4A 0%, #05102C 100%);
+  border-top: 2px solid #1E4CB8;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 20;
+  box-shadow: 0 -4px 14px rgba(0,0,0,0.6);
+}
+
+.nav-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8FA2D4;
+  font-size: 0.65rem;
+  font-weight: 700;
+  gap: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex: 1;
+}
+
+.nav-tab.active {
+  color: #FFD700;
+}
+
+.nav-icon {
+  font-size: 1.25rem;
+}
+
+.nav-tab.active .nav-icon {
+  filter: drop-shadow(0 0 6px #FFD700);
+}
+
+/* ============================================================
+   SCREEN 2: AUTHENTIC GAME BOARD SCREEN (Image 1)
+   ============================================================ */
+.game-screen {
+  display: none; /* Toggled when game mode is started */
+  width: 100%;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
   padding: 10px;
   position: relative;
 }
 
-/* Top Navigation Bar / Discreet Remote Indicator */
-.top-bar {
+.game-screen.active {
+  display: flex;
+}
+
+/* Top Game Action Bar */
+.game-top-bar {
   width: 100%;
+  max-width: 460px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 12px;
+  padding: 6px 10px;
   margin-bottom: 6px;
+}
+
+.back-btn {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1.5px solid rgba(255, 215, 0, 0.4);
+  color: #FFF;
+  padding: 5px 12px;
+  border-radius: 18px;
   font-family: var(--font-game);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .room-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 215, 0, 0.3);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 215, 0, 0.4);
   padding: 4px 10px;
   border-radius: 20px;
-  font-size: 0.78rem;
-  letter-spacing: 0.5px;
+  font-size: 0.75rem;
+  font-family: var(--font-game);
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.room-badge:hover {
-  background: rgba(0, 0, 0, 0.7);
-  border-color: var(--gold-primary);
-  transform: translateY(-1px);
 }
 
 .room-badge .dot {
   width: 8px;
   height: 8px;
-  background: #34C759;
+  background: #00E676;
   border-radius: 50%;
-  box-shadow: 0 0 6px #34C759;
-}
-
-.top-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.icon-btn {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #FFF;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: transform 0.15s ease;
-}
-
-.icon-btn:active {
-  transform: scale(0.92);
+  box-shadow: 0 0 6px #00E676;
 }
 
 /* ============================================================
-   LUDO BOARD WRAPPER & WOODEN FRAME
+   LUDO BOARD (Exact Layout & Colors from Image 1)
+   Top-Left: RED | Top-Right: GREEN | Bottom-Right: YELLOW | Bottom-Left: BLUE
    ============================================================ */
 .board-wrapper {
   position: relative;
   width: 100%;
-  max-width: 580px;
+  max-width: 440px;
   aspect-ratio: 1 / 1;
-  background: linear-gradient(135deg, var(--wood-light) 0%, var(--wood-medium) 50%, var(--wood-dark) 100%);
-  padding: 12px;
-  border-radius: 18px;
-  box-shadow: 
-    0 16px 36px rgba(0, 0, 0, 0.65),
-    inset 0 2px 4px rgba(255, 255, 255, 0.2),
-    inset 0 -3px 6px rgba(0, 0, 0, 0.8),
-    0 0 0 4px var(--wood-border);
+  background: #FFFFFF;
+  border: 4px solid #111111;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* Inner Gold Inset Rim */
-.board-inner-frame {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background: #FFFFFF;
-  border-radius: 8px;
-  border: 3px solid #111111;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
-  display: grid;
-  grid-template-columns: repeat(15, 1fr);
-  grid-template-rows: repeat(15, 1fr);
   overflow: hidden;
 }
 
-/* ============================================================
-   15x15 GRID CELLS & YARDS
-   ============================================================ */
+.board-inner-frame {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  grid-template-rows: repeat(15, 1fr);
+  background: #FFFFFF;
+  position: relative;
+}
 
-/* Base Yards (6x6 Corners) */
+/* 4 Base Yards (Image 1 Layout) */
 .yard {
-  border: 2.5px solid #111111;
+  border: 2px solid #111111;
   position: relative;
   display: flex;
   align-items: center;
@@ -180,47 +589,47 @@ body {
   z-index: 1;
 }
 
-.yard-green  { grid-column: 1 / 7; grid-row: 1 / 7; background: var(--color-green); }
-.yard-yellow { grid-column: 10 / 16; grid-row: 1 / 7; background: var(--color-yellow); }
-.yard-red    { grid-column: 1 / 7; grid-row: 10 / 16; background: var(--color-red); }
-.yard-blue   { grid-column: 10 / 16; grid-row: 10 / 16; background: var(--color-blue); }
+/* Corner Placements from Image 1 */
+.yard-red    { grid-column: 1 / 7; grid-row: 1 / 7; background: var(--color-red); }
+.yard-green  { grid-column: 10 / 16; grid-row: 1 / 7; background: var(--color-green); }
+.yard-yellow { grid-column: 10 / 16; grid-row: 10 / 16; background: var(--color-yellow); }
+.yard-blue   { grid-column: 1 / 7; grid-row: 10 / 16; background: var(--color-blue); }
 
-/* Inner White Box inside Base Yard */
+/* Inner White Square inside Yard */
 .yard-inner {
-  width: 72%;
-  height: 72%;
+  width: 74%;
+  height: 74%;
   background: #FFFFFF;
-  border-radius: 12px;
-  border: 3px solid #111;
-  box-shadow: inset 0 4px 8px rgba(0,0,0,0.25);
+  border-radius: 6px;
+  border: 2px solid #111111;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   padding: 8%;
   gap: 12%;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* Token Slot Circles inside Yard */
+/* 4 Ring Slots inside each Base (Image 1) */
 .token-slot {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 2px solid rgba(0, 0, 0, 0.4);
+  border: 2.5px solid #111;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
 }
 
-.yard-green .token-slot  { background: radial-gradient(circle, var(--color-green-light) 0%, var(--color-green) 100%); }
-.yard-yellow .token-slot { background: radial-gradient(circle, var(--color-yellow-light) 0%, var(--color-yellow) 100%); }
-.yard-red .token-slot    { background: radial-gradient(circle, var(--color-red-light) 0%, var(--color-red) 100%); }
-.yard-blue .token-slot   { background: radial-gradient(circle, var(--color-blue-light) 0%, var(--color-blue) 100%); }
+.yard-red .token-slot    { background: radial-gradient(circle, #E52521 0%, var(--color-red-dark) 100%); }
+.yard-green .token-slot  { background: radial-gradient(circle, #009E49 0%, var(--color-green-dark) 100%); }
+.yard-yellow .token-slot { background: radial-gradient(circle, #FFC20E 0%, var(--color-yellow-dark) 100%); }
+.yard-blue .token-slot   { background: radial-gradient(circle, #0072CE 0%, var(--color-blue-dark) 100%); }
 
-/* Grid Cells (Tracks & Pathways) */
+/* Grid Cells (Tracks) */
 .cell {
-  border: 1px solid #222222;
+  border: 1px solid #333333;
   position: relative;
   display: flex;
   align-items: center;
@@ -229,96 +638,83 @@ body {
   z-index: 1;
 }
 
-/* Colored Track Cells & Home Columns */
+/* Colored Track Cells & Home Columns (Image 1) */
 .cell-red    { background: var(--color-red) !important; }
 .cell-green  { background: var(--color-green) !important; }
 .cell-yellow { background: var(--color-yellow) !important; }
 .cell-blue   { background: var(--color-blue) !important; }
 
-/* Safe Star Icons on Cells */
+/* Star Safe Tiles (Image 1 has clear star outlines) */
 .star-icon {
-  width: 68%;
-  height: 68%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 72%;
+  height: 72%;
   position: absolute;
   pointer-events: none;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
 
 .star-icon svg {
   width: 100%;
   height: 100%;
-  fill: #FFD700;
-  stroke: #7A5200;
+  fill: #FFFFFF;
+  stroke: #222222;
   stroke-width: 1.5;
 }
 
-/* Arrow Markers for Track Entry */
+/* Arrows pointing out of start squares (Image 1) */
 .arrow-marker {
+  width: 65%;
+  height: 65%;
   position: absolute;
-  width: 60%;
-  height: 60%;
   pointer-events: none;
-  opacity: 0.85;
 }
 
-/* ============================================================
-   CENTER TRIANGLE / FINISH AREA (3x3 grid: 7 / 10)
-   ============================================================ */
+/* Center Finish Area (Image 1: 4 Colored Triangles) */
 .center-goal {
   grid-column: 7 / 10;
   grid-row: 7 / 10;
   border: 2px solid #111111;
   position: relative;
-  background: #222222;
+  background: #FFFFFF;
   overflow: hidden;
   z-index: 2;
 }
 
-/* SVG 4-Color Triangles */
 .center-triangles-svg {
+  width: 100%;
+  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
 }
 
-/* ============================================================
-   CENTER "LUDO KING" LOGO & STEALTH TAP MATRIX
-   ============================================================ */
+/* Center Logo & Stealth Tap Matrix */
 .center-logo-container {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 74%;
-  height: 74%;
+  width: 66%;
+  height: 66%;
   border-radius: 50%;
   background: radial-gradient(circle, #381a07 0%, #150903 100%);
   border: 2px solid var(--gold-primary);
-  box-shadow: 
-    0 0 10px rgba(255, 215, 0, 0.6),
-    inset 0 0 6px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 5;
-  user-select: none;
 }
 
 .crown-icon {
-  width: 38%;
-  height: 38%;
+  width: 36%;
+  height: 36%;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
   transition: filter 0.1s ease, transform 0.1s ease;
 }
 
-/* Imperceptible flash feedback for stealth trigger */
 .crown-flash {
   filter: drop-shadow(0 0 10px #FFD700) brightness(1.7) !important;
   transform: scale(1.08);
@@ -326,116 +722,59 @@ body {
 
 .logo-text {
   font-family: var(--font-game);
-  font-size: 0.58rem;
+  font-size: 0.54rem;
   letter-spacing: 0.5px;
   line-height: 1;
   text-align: center;
-  text-transform: uppercase;
   background: linear-gradient(180deg, #FFFFFF 0%, #FFD700 60%, #FFA500 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.9));
   margin-top: 2px;
 }
 
 /* ============================================================
-   3D GLOSSY TOKEN SPRITES & HOP ANIMATIONS
+   TEARDROP / MAP-PIN TOKEN SPRITES (Exact match to Image 1)
    ============================================================ */
 .token {
   position: absolute;
-  width: 82%;
-  height: 82%;
-  border-radius: 50%;
+  width: 86%;
+  height: 86%;
   cursor: pointer;
   z-index: 10;
-  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.55));
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Authentic Ludo King 3D Glossy Conical & Spherical Design */
-.token-inner {
+/* Authentic Teardrop / Map-Pin Shape (Image 1) */
+.token-pin-svg {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
 }
 
-/* Token Base Gradient Shading */
-.token-red .token-inner {
-  background: radial-gradient(circle at 35% 30%, #FF8583 0%, var(--color-red) 55%, var(--color-red-dark) 100%);
-  box-shadow: inset 0 -3px 4px rgba(0,0,0,0.5), 0 0 4px rgba(229, 37, 33, 0.6);
-}
-
-.token-green .token-inner {
-  background: radial-gradient(circle at 35% 30%, #68E088 0%, var(--color-green) 55%, var(--color-green-dark) 100%);
-  box-shadow: inset 0 -3px 4px rgba(0,0,0,0.5), 0 0 4px rgba(0, 158, 73, 0.6);
-}
-
-.token-yellow .token-inner {
-  background: radial-gradient(circle at 35% 30%, #FFF280 0%, var(--color-yellow) 55%, var(--color-yellow-dark) 100%);
-  box-shadow: inset 0 -3px 4px rgba(0,0,0,0.5), 0 0 4px rgba(255, 194, 14, 0.6);
-}
-
-.token-blue .token-inner {
-  background: radial-gradient(circle at 35% 30%, #7AC2FF 0%, var(--color-blue) 55%, var(--color-blue-dark) 100%);
-  box-shadow: inset 0 -3px 4px rgba(0,0,0,0.5), 0 0 4px rgba(0, 114, 206, 0.6);
-}
-
-/* Center Crown / Pin on Token Head */
-.token-pin {
-  width: 44%;
-  height: 44%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #FFFFFF 0%, rgba(255, 255, 255, 0.6) 50%, rgba(200, 200, 200, 0.2) 100%);
-  box-shadow: inset 0 1px 2px rgba(255,255,255,0.9), 0 1px 3px rgba(0,0,0,0.4);
-}
-
-/* Active Bounce & Glow when Valid for Move */
 .token.selectable {
-  animation: tokenPulse 0.9s infinite alternate ease-in-out;
-  cursor: pointer;
+  animation: tokenPulse 0.85s infinite alternate ease-in-out;
   z-index: 25;
 }
 
 @keyframes tokenPulse {
-  0% {
-    transform: translateY(0) scale(1.0);
-    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 6px #FFD700);
-  }
-  100% {
-    transform: translateY(-5px) scale(1.15);
-    filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 12px #FFD700);
-  }
+  0% { transform: translateY(0) scale(1.0); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 6px #FFD700); }
+  100% { transform: translateY(-5px) scale(1.18); filter: drop-shadow(0 8px 10px rgba(0,0,0,0.6)) drop-shadow(0 0 12px #FFD700); }
 }
 
-/* Token Hopping Squash & Stretch Keyframe */
 .token.hopping {
   animation: tokenHop 0.16s ease-in-out;
 }
 
 @keyframes tokenHop {
-  0% {
-    transform: scale(1, 1) translateY(0);
-  }
-  40% {
-    transform: scale(0.85, 1.3) translateY(-14px);
-  }
-  75% {
-    transform: scale(1.2, 0.8) translateY(0);
-  }
-  100% {
-    transform: scale(1, 1) translateY(0);
-  }
+  0% { transform: scale(1, 1) translateY(0); }
+  40% { transform: scale(0.85, 1.3) translateY(-14px); }
+  75% { transform: scale(1.2, 0.8) translateY(0); }
+  100% { transform: scale(1, 1) translateY(0); }
 }
 
-/* Token Layering Container overlaying the board */
 .tokens-overlay {
   position: absolute;
   top: 0;
@@ -451,44 +790,39 @@ body {
 }
 
 /* ============================================================
-   4 PLAYER HUDS & 3D ROLLING DICE CUBE
+   4 PLAYER HUDS & 3D ROLLING DICE
    ============================================================ */
 .players-hud-grid {
   width: 100%;
-  max-width: 580px;
+  max-width: 440px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 10px;
+  gap: 8px;
   margin-top: 10px;
 }
 
 .player-hud {
   display: flex;
   align-items: center;
-  background: rgba(18, 25, 40, 0.75);
-  backdrop-filter: blur(8px);
+  background: rgba(10, 20, 44, 0.85);
   border: 1.5px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  padding: 6px 10px;
+  border-radius: 12px;
+  padding: 5px 8px;
   gap: 8px;
-  position: relative;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .player-hud.active {
   border-color: var(--gold-primary);
-  background: rgba(30, 42, 68, 0.95);
-  box-shadow: 0 0 16px rgba(255, 215, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.6);
+  background: rgba(20, 36, 75, 0.95);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
   transform: translateY(-2px);
 }
 
-/* Circular Avatar with SVG Countdown Timer */
 .avatar-timer-wrapper {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
 }
 
@@ -509,7 +843,7 @@ body {
 
 .timer-progress-circle {
   fill: none;
-  stroke: #34C759;
+  stroke: #00E676;
   stroke-width: 3.5;
   stroke-linecap: round;
   stroke-dasharray: 126;
@@ -521,20 +855,16 @@ body {
   position: absolute;
   top: 4px;
   left: 4px;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background-size: cover;
-  background-position: center;
   border: 2px solid #FFF;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
-/* Player Info */
 .player-details {
   display: flex;
   flex-direction: column;
@@ -544,25 +874,21 @@ body {
 
 .player-name {
   font-family: var(--font-game);
-  font-size: 0.85rem;
-  letter-spacing: 0.3px;
+  font-size: 0.8rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .player-tag {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   opacity: 0.7;
-  font-weight: 500;
 }
 
-/* ============================================================
-   3D ROLLING DICE CUBE
-   ============================================================ */
+/* 3D Dice */
 .dice-container {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   perspective: 300px;
   display: flex;
   align-items: center;
@@ -572,8 +898,8 @@ body {
 }
 
 .dice-cube {
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   position: relative;
   transform-style: preserve-3d;
   transition: transform 0.15s ease-out;
@@ -581,26 +907,25 @@ body {
 
 .dice-face {
   position: absolute;
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   background: radial-gradient(circle at 40% 40%, #FFFFFF 0%, #ECECEC 70%, #D8D8D8 100%);
   border: 1.5px solid #222222;
-  border-radius: 7px;
+  border-radius: 6px;
   box-shadow: inset 0 1px 2px rgba(255,255,255,0.9), 0 3px 6px rgba(0,0,0,0.35);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  padding: 4px;
+  padding: 3px;
 }
 
 .dice-dot {
-  width: 6px;
-  height: 6px;
-  background: radial-gradient(circle at 35% 35%, #222 0%, #000 100%);
+  width: 5px;
+  height: 5px;
+  background: #111;
   border-radius: 50%;
   align-self: center;
   justify-self: center;
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.4);
 }
 
 .player-hud.hud-red .dice-dot { background: var(--color-red); }
@@ -608,27 +933,14 @@ body {
 .player-hud.hud-yellow .dice-dot { background: var(--color-yellow-dark); }
 .player-hud.hud-blue .dice-dot { background: var(--color-blue); }
 
-/* Dice 3D Tumbling Animation */
 .dice-rolling {
   animation: diceRoll3D 0.55s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 @keyframes diceRoll3D {
-  0% {
-    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(0.9);
-  }
-  25% {
-    transform: rotateX(360deg) rotateY(180deg) rotateZ(90deg) scale(1.15) translateY(-8px);
-  }
-  50% {
-    transform: rotateX(720deg) rotateY(540deg) rotateZ(270deg) scale(1.15) translateY(-12px);
-  }
-  75% {
-    transform: rotateX(900deg) rotateY(720deg) rotateZ(360deg) scale(1.05) translateY(-4px);
-  }
-  100% {
-    transform: rotateX(1080deg) rotateY(1080deg) rotateZ(360deg) scale(1) translateY(0);
-  }
+  0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(0.9); }
+  50% { transform: rotateX(720deg) rotateY(540deg) rotateZ(270deg) scale(1.15) translateY(-10px); }
+  100% { transform: rotateX(1080deg) rotateY(1080deg) rotateZ(360deg) scale(1) translateY(0); }
 }
 
 .dice-container.clickable {
@@ -640,9 +952,7 @@ body {
   100% { transform: scale(1.12); filter: drop-shadow(0 0 10px rgba(255,215,0,0.9)); }
 }
 
-/* ============================================================
-   VICTORY CONGRATULATIONS MODAL
-   ============================================================ */
+/* Modals */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -665,51 +975,15 @@ body {
   pointer-events: auto;
 }
 
-.victory-card {
-  background: radial-gradient(circle at center, #2a1b40 0%, #130a21 100%);
-  border: 3px solid var(--gold-primary);
-  border-radius: 24px;
-  padding: 30px 24px;
+.modal-card {
+  background: radial-gradient(circle at center, #1b263b 0%, #0d1b2a 100%);
+  border: 2px solid var(--gold-primary);
+  border-radius: 20px;
+  padding: 24px;
   text-align: center;
-  max-width: 380px;
+  max-width: 360px;
   width: 90%;
-  box-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
-  transform: scale(0.85);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.modal-overlay.open .victory-card {
-  transform: scale(1);
-}
-
-.victory-crown {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 12px;
-  filter: drop-shadow(0 6px 12px rgba(255, 215, 0, 0.7));
-  animation: crownFloat 2s infinite ease-in-out alternate;
-}
-
-@keyframes crownFloat {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-8px); }
-}
-
-.victory-title {
-  font-family: var(--font-game);
-  font-size: 2.2rem;
-  background: linear-gradient(180deg, #FFFFFF 0%, #FFD700 70%, #FFA500 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 6px;
-}
-
-.victory-subtitle {
-  font-size: 1.05rem;
-  color: #E2E8F0;
-  margin-bottom: 22px;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
 }
 
 .btn-primary {
@@ -717,20 +991,13 @@ body {
   background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%);
   border: 2px solid #FFF;
   color: #1A0F00;
-  font-size: 1.15rem;
-  padding: 12px 28px;
-  border-radius: 30px;
+  font-size: 1.05rem;
+  padding: 10px 24px;
+  border-radius: 24px;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(255, 165, 0, 0.5);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.5);
 }
 
-.btn-primary:active {
-  transform: scale(0.95);
-  box-shadow: 0 2px 8px rgba(255, 165, 0, 0.4);
-}
-
-/* Confetti Canvas */
 .confetti-canvas {
   position: absolute;
   top: 0;
@@ -739,60 +1006,4 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 105;
-}
-
-/* Room QR Code Modal */
-.qr-modal-card {
-  background: #1A202C;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 24px;
-  text-align: center;
-  max-width: 340px;
-  width: 90%;
-  color: #FFF;
-}
-
-.qr-code-box {
-  background: #FFF;
-  padding: 12px;
-  border-radius: 12px;
-  margin: 16px auto;
-  display: inline-block;
-}
-
-.qr-code-box img {
-  display: block;
-}
-
-/* ============================================================
-   RESPONSIVE SCALING
-   ============================================================ */
-@media (max-width: 520px) {
-  .board-wrapper {
-    padding: 8px;
-    border-radius: 14px;
-  }
-  .player-hud {
-    padding: 5px 8px;
-  }
-  .player-name {
-    font-size: 0.75rem;
-  }
-  .avatar-timer-wrapper {
-    width: 38px;
-    height: 38px;
-  }
-  .player-avatar {
-    width: 30px;
-    height: 30px;
-  }
-  .dice-container {
-    width: 36px;
-    height: 36px;
-  }
-  .dice-cube {
-    width: 30px;
-    height: 30px;
-  }
 }

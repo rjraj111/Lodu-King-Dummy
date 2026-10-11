@@ -11,171 +11,334 @@
 </head>
 <body>
 
-  <div class="game-container">
-    <!-- Top Bar -->
-    <header class="top-bar">
-      <div class="room-badge" id="roomBadgeBtn" title="Click to view Remote Controller link/QR">
-        <span class="dot"></span>
-        <span id="roomCodeText">ROOM: LK1001</span>
+  <div class="mobile-app-frame">
+
+    <!-- ============================================================
+         SCREEN 1: AUTHENTIC LUDO KING HOME LOBBY (Image 2)
+         ============================================================ -->
+    <div class="lobby-screen" id="lobbyScreen">
+      <!-- Top Profile & Currency Header -->
+      <header class="lobby-top-bar">
+        <div class="profile-badge" id="profileBadge">
+          <div class="avatar-frame">
+            <div class="avatar-img"></div>
+            <span class="profile-level-star">1</span>
+          </div>
+          <div class="lobby-icons-group">
+            <button class="header-icon-btn" title="Settings">⚙️</button>
+            <button class="header-icon-btn" style="position: relative;" title="Messages">
+              ✉️
+              <span style="position: absolute; top: -3px; right: -3px; width: 7px; height: 7px; background: #FF3B30; border-radius: 50%;"></span>
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <!-- Diamonds / Gems -->
+          <div class="currency-pill">
+            <span class="currency-icon">💎</span>
+            <span>50</span>
+            <span class="currency-add">+</span>
+          </div>
+          <!-- Gold Coins -->
+          <div class="currency-pill">
+            <span class="currency-icon">🪙</span>
+            <span>10,050</span>
+            <span class="currency-add">+</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Promo Banners Row -->
+      <div class="lobby-banners-row">
+        <div class="promo-tag">
+          <span class="promo-title">₹25 Only</span>
+          <span class="promo-sub">Starter Pack</span>
+        </div>
+        <div class="promo-tag">
+          <span class="promo-title">🎁 7 DAYS</span>
+          <span class="promo-sub">Gift Chest</span>
+        </div>
       </div>
 
-      <div class="top-actions">
-        <button class="icon-btn" id="audioToggleBtn" title="Toggle Sound">🔊</button>
-        <button class="icon-btn" id="remoteLinkBtn" title="Mobile Remote Controller">📱</button>
-        <button class="icon-btn" id="restartGameBtn" title="Restart Game">🔄</button>
-      </div>
-    </header>
+      <!-- Center 3D Ludo King Logo (Image 2) -->
+      <div class="lobby-hero-brand">
+        <!-- Golden Beveled Crown -->
+        <svg class="hero-crown" viewBox="0 0 64 64">
+          <path d="M6 50h52v6H6zm6-6l-4-26 14 10 10-18 10 18 14-10-4 26z" fill="#FFD700" stroke="#FFF" stroke-width="2"/>
+          <circle cx="8" cy="18" r="3.5" fill="#FF3B30"/>
+          <circle cx="32" cy="10" r="4.5" fill="#00E5FF"/>
+          <circle cx="56" cy="18" r="3.5" fill="#FF3B30"/>
+        </svg>
 
-    <!-- Main Ludo Board Frame -->
-    <div class="board-wrapper">
-      <div class="board-inner-frame" id="boardGrid">
-        <!-- 15x15 Grid cells, Yards, and Center Goal will be populated dynamically -->
+        <!-- 3D L-U-D-O Letter Blocks -->
+        <div class="ludo-3d-letters">
+          <div class="ludo-letter-block block-l">L</div>
+          <div class="ludo-letter-block block-u">U</div>
+          <div class="ludo-letter-block block-d">D</div>
+          <div class="ludo-letter-block block-o">O</div>
+        </div>
+
+        <div class="hero-king-text">KING</div>
+
+        <!-- 3D Mini Perspective Board with Pawns -->
+        <div class="hero-mini-board-stage">
+          <div class="mini-board-graphic">
+            <div class="mini-dice-cube"></div>
+          </div>
+        </div>
       </div>
-      <!-- Overlay for 3D animated tokens -->
-      <div class="tokens-overlay" id="tokensOverlay"></div>
+
+      <!-- 4 Main Game Modes (2x2 Grid from Image 2) -->
+      <div class="lobby-modes-grid">
+        <!-- 1. Play Online -->
+        <div class="mode-card" id="btnModeOnline">
+          <div class="mode-card-inner">
+            <div class="mode-icon">🌐</div>
+            <div class="mode-title">PLAY ONLINE</div>
+            <div class="mode-subtitle">+ Players: 122,810</div>
+          </div>
+        </div>
+
+        <!-- 2. Play with Friends -->
+        <div class="mode-card" id="btnModeFriends">
+          <div class="mode-card-inner">
+            <div class="mode-icon">🥊</div>
+            <div class="mode-title">PLAY WITH FRIENDS</div>
+            <div class="mode-subtitle">+ Players: 10,436</div>
+          </div>
+        </div>
+
+        <!-- 3. Vs Computer -->
+        <div class="mode-card" id="btnModeComputer">
+          <div class="mode-card-inner">
+            <div class="mode-icon">🤖</div>
+            <div class="mode-title">COMPUTER</div>
+            <div class="mode-subtitle">VS AI BOTS</div>
+          </div>
+        </div>
+
+        <!-- 4. Pass N Play -->
+        <div class="mode-card" id="btnModePassPlay">
+          <div class="mode-card-inner">
+            <div class="mode-icon">👥</div>
+            <div class="mode-title">PASS N PLAY</div>
+            <div class="mode-subtitle">2-4 PLAYERS</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Middle Features & Missions -->
+      <div class="lobby-extra-row">
+        <div class="tournament-badge" id="btnTournament">
+          <span>👑</span>
+          <span>TOURNAMENT</span>
+        </div>
+        <div class="tournament-badge" style="background: linear-gradient(135deg, #10B981 0%, #047857 100%);" id="btnDailySpin">
+          <span>🎡</span>
+          <span>SPIN & WIN</span>
+        </div>
+      </div>
+
+      <div class="claim-mission-bar" id="btnMissionClaim">
+        <span class="claim-mission-text">MISSION 8 : REACH HOME</span>
+        <button class="claim-btn">CLAIM</button>
+      </div>
+
+      <!-- Bottom Navigation Bar (Image 2) -->
+      <nav class="lobby-bottom-nav">
+        <div class="nav-tab">
+          <span class="nav-icon">📅</span>
+          <span>EVENT</span>
+        </div>
+        <div class="nav-tab">
+          <span class="nav-icon">👥</span>
+          <span>FRIENDS</span>
+        </div>
+        <div class="nav-tab active">
+          <span class="nav-icon">🏠</span>
+          <span>HOME</span>
+        </div>
+        <div class="nav-tab">
+          <span class="nav-icon">🎒</span>
+          <span>INVENTORY</span>
+        </div>
+        <div class="nav-tab">
+          <span class="nav-icon">🛒</span>
+          <span>STORE</span>
+        </div>
+      </nav>
     </div>
 
-    <!-- 4 Player HUDs -->
-    <div class="players-hud-grid">
-      <!-- Player 1: Red (Bottom-Left) -->
-      <div class="player-hud hud-red active" id="hud-red">
-        <div class="avatar-timer-wrapper">
-          <svg class="timer-svg" viewBox="0 0 44 44">
-            <circle class="timer-bg-circle" cx="22" cy="22" r="18" />
-            <circle class="timer-progress-circle" id="timer-red" cx="22" cy="22" r="18" />
-          </svg>
-          <div class="player-avatar" style="background-color: var(--color-red);">👑</div>
+    <!-- ============================================================
+         SCREEN 2: AUTHENTIC GAME BOARD SCREEN (Image 1)
+         Top-Left: RED | Top-Right: GREEN | Bottom-Right: YELLOW | Bottom-Left: BLUE
+         ============================================================ -->
+    <div class="game-screen" id="gameScreen">
+      <!-- Top Action Bar -->
+      <div class="game-top-bar">
+        <button class="back-btn" id="backToLobbyBtn">
+          <span>◀</span> Lobby
+        </button>
+
+        <div class="room-badge" id="roomBadgeBtn" title="Click to view Remote Controller link/QR">
+          <span class="dot"></span>
+          <span id="roomCodeText">ROOM: LK1001</span>
         </div>
-        <div class="player-details">
-          <span class="player-name">Player (Red)</span>
-          <span class="player-tag">Human</span>
-        </div>
-        <div class="dice-container clickable" id="dice-red" data-color="red">
-          <div class="dice-cube" id="cube-red">
-            <div class="dice-face" id="face-red"></div>
-          </div>
+
+        <div style="display: flex; gap: 6px;">
+          <button class="header-icon-btn" id="audioToggleBtn" title="Toggle Sound">🔊</button>
+          <button class="header-icon-btn" id="remoteLinkBtn" title="Mobile Remote Controller">📱</button>
         </div>
       </div>
 
-      <!-- Player 2: Green (Top-Left) -->
-      <div class="player-hud hud-green" id="hud-green">
-        <div class="avatar-timer-wrapper">
-          <svg class="timer-svg" viewBox="0 0 44 44">
-            <circle class="timer-bg-circle" cx="22" cy="22" r="18" />
-            <circle class="timer-progress-circle" id="timer-green" cx="22" cy="22" r="18" />
-          </svg>
-          <div class="player-avatar" style="background-color: var(--color-green);">🤖</div>
+      <!-- 15x15 Ludo Board Frame (Exact match to Image 1) -->
+      <div class="board-wrapper">
+        <div class="board-inner-frame" id="boardGrid">
+          <!-- Populated dynamically: Base Yards, Tracks, Center Goal -->
         </div>
-        <div class="player-details">
-          <span class="player-name">Bot Green</span>
-          <span class="player-tag">AI</span>
-        </div>
-        <div class="dice-container" id="dice-green" data-color="green">
-          <div class="dice-cube" id="cube-green">
-            <div class="dice-face" id="face-green"></div>
-          </div>
-        </div>
+        <!-- Overlay for Teardrop / Map-Pin animated tokens -->
+        <div class="tokens-overlay" id="tokensOverlay"></div>
       </div>
 
-      <!-- Player 3: Yellow (Top-Right) -->
-      <div class="player-hud hud-yellow" id="hud-yellow">
-        <div class="avatar-timer-wrapper">
-          <svg class="timer-svg" viewBox="0 0 44 44">
-            <circle class="timer-bg-circle" cx="22" cy="22" r="18" />
-            <circle class="timer-progress-circle" id="timer-yellow" cx="22" cy="22" r="18" />
-          </svg>
-          <div class="player-avatar" style="background-color: var(--color-yellow);">🤖</div>
-        </div>
-        <div class="player-details">
-          <span class="player-name">Bot Yellow</span>
-          <span class="player-tag">AI</span>
-        </div>
-        <div class="dice-container" id="dice-yellow" data-color="yellow">
-          <div class="dice-cube" id="cube-yellow">
-            <div class="dice-face" id="face-yellow"></div>
+      <!-- 4 Player HUDs -->
+      <div class="players-hud-grid">
+        <!-- Player 1: Red (Top-Left) -->
+        <div class="player-hud hud-red active" id="hud-red">
+          <div class="avatar-timer-wrapper">
+            <svg class="timer-svg" viewBox="0 0 44 44">
+              <circle class="timer-bg-circle" cx="22" cy="22" r="18" />
+              <circle class="timer-progress-circle" id="timer-red" cx="22" cy="22" r="18" />
+            </svg>
+            <div class="player-avatar" style="background-color: var(--color-red);">👑</div>
+          </div>
+          <div class="player-details">
+            <span class="player-name">Player (Red)</span>
+            <span class="player-tag">Human</span>
+          </div>
+          <div class="dice-container clickable" id="dice-red" data-color="red">
+            <div class="dice-cube" id="cube-red">
+              <div class="dice-face" id="face-red"></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Player 4: Blue (Bottom-Right) -->
-      <div class="player-hud hud-blue" id="hud-blue">
-        <div class="avatar-timer-wrapper">
-          <svg class="timer-svg" viewBox="0 0 44 44">
-            <circle class="timer-bg-circle" cx="22" cy="22" r="18" />
-            <circle class="timer-progress-circle" id="timer-blue" cx="22" cy="22" r="18" />
-          </svg>
-          <div class="player-avatar" style="background-color: var(--color-blue);">🤖</div>
+        <!-- Player 2: Green (Top-Right) -->
+        <div class="player-hud hud-green" id="hud-green">
+          <div class="avatar-timer-wrapper">
+            <svg class="timer-svg" viewBox="0 0 44 44">
+              <circle class="timer-bg-circle" cx="22" cy="22" r="18" />
+              <circle class="timer-progress-circle" id="timer-green" cx="22" cy="22" r="18" />
+            </svg>
+            <div class="player-avatar" style="background-color: var(--color-green);">🤖</div>
+          </div>
+          <div class="player-details">
+            <span class="player-name">Bot Green</span>
+            <span class="player-tag">AI</span>
+          </div>
+          <div class="dice-container" id="dice-green" data-color="green">
+            <div class="dice-cube" id="cube-green">
+              <div class="dice-face" id="face-green"></div>
+            </div>
+          </div>
         </div>
-        <div class="player-details">
-          <span class="player-name">Bot Blue</span>
-          <span class="player-tag">AI</span>
+
+        <!-- Player 3: Yellow (Bottom-Right) -->
+        <div class="player-hud hud-yellow" id="hud-yellow">
+          <div class="avatar-timer-wrapper">
+            <svg class="timer-svg" viewBox="0 0 44 44">
+              <circle class="timer-bg-circle" cx="22" cy="22" r="18" />
+              <circle class="timer-progress-circle" id="timer-yellow" cx="22" cy="22" r="18" />
+            </svg>
+            <div class="player-avatar" style="background-color: var(--color-yellow);">🤖</div>
+          </div>
+          <div class="player-details">
+            <span class="player-name">Bot Yellow</span>
+            <span class="player-tag">AI</span>
+          </div>
+          <div class="dice-container" id="dice-yellow" data-color="yellow">
+            <div class="dice-cube" id="cube-yellow">
+              <div class="dice-face" id="face-yellow"></div>
+            </div>
+          </div>
         </div>
-        <div class="dice-container" id="dice-blue" data-color="blue">
-          <div class="dice-cube" id="cube-blue">
-            <div class="dice-face" id="face-blue"></div>
+
+        <!-- Player 4: Blue (Bottom-Left) -->
+        <div class="player-hud hud-blue" id="hud-blue">
+          <div class="avatar-timer-wrapper">
+            <svg class="timer-svg" viewBox="0 0 44 44">
+              <circle class="timer-bg-circle" cx="22" cy="22" r="18" />
+              <circle class="timer-progress-circle" id="timer-blue" cx="22" cy="22" r="18" />
+            </svg>
+            <div class="player-avatar" style="background-color: var(--color-blue);">🤖</div>
+          </div>
+          <div class="player-details">
+            <span class="player-name">Bot Blue</span>
+            <span class="player-tag">AI</span>
+          </div>
+          <div class="dice-container" id="dice-blue" data-color="blue">
+            <div class="dice-cube" id="cube-blue">
+              <div class="dice-face" id="face-blue"></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 
-  <!-- Victory Celebration Modal -->
+  <!-- Victory Modal -->
   <div class="modal-overlay" id="victoryModal">
     <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
-    <div class="victory-card">
-      <svg class="victory-crown" viewBox="0 0 64 64">
+    <div class="modal-card">
+      <svg style="width: 70px; height: 70px; margin-bottom: 8px;" viewBox="0 0 64 64">
         <path d="M6 50h52v6H6zm6-6l-4-26 14 10 10-18 10 18 14-10-4 26z" fill="#FFD700" stroke="#FFF" stroke-width="2"/>
-        <circle cx="8" cy="18" r="4" fill="#FF5252"/>
-        <circle cx="32" cy="10" r="5" fill="#40C4FF"/>
-        <circle cx="56" cy="18" r="4" fill="#FF5252"/>
       </svg>
-      <h2 class="victory-title" id="winnerTitle">WINNER!</h2>
-      <p class="victory-subtitle" id="winnerSubtitle">Red Player conquered the board!</p>
+      <h2 style="font-family: var(--font-game); font-size: 2rem; color: var(--gold-primary);" id="winnerTitle">WINNER!</h2>
+      <p style="font-size: 0.95rem; color: #E2E8F0; margin-bottom: 20px;" id="winnerSubtitle">Red Player conquered the board!</p>
       <button class="btn-primary" id="playAgainBtn">PLAY AGAIN</button>
     </div>
   </div>
 
-  <!-- Remote Controller Info & QR Code Modal -->
+  <!-- Remote Controller QR Modal -->
   <div class="modal-overlay" id="qrModal">
-    <div class="qr-modal-card">
-      <h3 style="font-family: var(--font-game); font-size: 1.3rem; margin-bottom: 6px;">📱 Remote Smartphone Controller</h3>
-      <p style="font-size: 0.85rem; color: #CBD5E1; margin-bottom: 12px;">
-        Open this controller on a second smartphone or browser tab to override dice and choose winners in real-time!
+    <div class="modal-card" style="max-width: 320px;">
+      <h3 style="font-family: var(--font-game); font-size: 1.25rem; color: var(--gold-primary); margin-bottom: 6px;">📱 Remote Controller</h3>
+      <p style="font-size: 0.8rem; color: #CBD5E1; margin-bottom: 10px;">
+        Scan with your smartphone to control dice and winners in real-time!
       </p>
-      <div class="qr-code-box" id="qrCodeContainer">
-        <img id="qrCodeImage" alt="Controller QR Code" width="160" height="160" />
+      <div style="background: #FFF; padding: 10px; border-radius: 12px; display: inline-block; margin-bottom: 10px;">
+        <img id="qrCodeImage" alt="Controller QR Code" width="150" height="150" />
       </div>
-      <div style="margin: 10px 0; font-family: monospace; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px; font-size: 0.82rem; word-break: break-all;" id="controllerUrlText">
+      <div style="margin-bottom: 12px; font-family: monospace; background: rgba(0,0,0,0.5); padding: 6px; border-radius: 6px; font-size: 0.75rem; word-break: break-all;" id="controllerUrlText">
         controller.html
       </div>
       <div style="display: flex; gap: 8px; justify-content: center;">
-        <button class="btn-primary" style="padding: 8px 18px; font-size: 0.9rem;" id="copyLinkBtn">Copy Link</button>
-        <button class="btn-primary" style="padding: 8px 18px; font-size: 0.9rem; background: #4A5568;" id="closeQrModalBtn">Close</button>
+        <button class="btn-primary" style="padding: 6px 16px; font-size: 0.85rem;" id="copyLinkBtn">Copy Link</button>
+        <button class="btn-primary" style="padding: 6px 16px; font-size: 0.85rem; background: #475569;" id="closeQrModalBtn">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- External MQTT library for WebSockets HiveMQ -->
+  <!-- Scripts -->
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-
-  <!-- Game Scripts -->
   <script src="js/audio.js"></script>
   <script src="js/diceEngine.js"></script>
   <script src="js/sync.js"></script>
   <script src="js/engine.js"></script>
 
   <script>
-    /* ============================================================
-       MAIN UI CONTROLLER & BOARD GENERATION
-       ============================================================ */
     document.addEventListener('DOMContentLoaded', () => {
+      const lobbyScreen = document.getElementById('lobbyScreen');
+      const gameScreen = document.getElementById('gameScreen');
+      const backToLobbyBtn = document.getElementById('backToLobbyBtn');
+
       const boardGrid = document.getElementById('boardGrid');
       const tokensOverlay = document.getElementById('tokensOverlay');
       const roomBadgeBtn = document.getElementById('roomBadgeBtn');
       const roomCodeText = document.getElementById('roomCodeText');
       const audioToggleBtn = document.getElementById('audioToggleBtn');
       const remoteLinkBtn = document.getElementById('remoteLinkBtn');
-      const restartGameBtn = document.getElementById('restartGameBtn');
       const victoryModal = document.getElementById('victoryModal');
       const playAgainBtn = document.getElementById('playAgainBtn');
       const qrModal = document.getElementById('qrModal');
@@ -184,16 +347,14 @@
       const qrCodeImage = document.getElementById('qrCodeImage');
       const controllerUrlText = document.getElementById('controllerUrlText');
 
-      // Initialize Sync Manager
+      // Sync Manager
       const syncManager = new SyncManager(false);
       roomCodeText.textContent = `ROOM: ${syncManager.getRoomId()}`;
       syncManager.connect();
 
-      // Remote command handler
+      // Remote command listener
       syncManager.onControlCommand = (data) => {
         if (!data || !data.action) return;
-        console.log('[MainGame] Received remote command:', data);
-
         if (data.action === 'SET_WINNER') {
           window.diceEngine.setFavoredPlayer(data.player);
           triggerCrownFlash();
@@ -206,13 +367,11 @@
         }
       };
 
-      // Generate the Board
+      // Build 15x15 board matching Image 1
       buildBoardDOM();
-
-      // Stealth Tap Matrix tracking
       setupStealthTapMatrix();
 
-      // Connect Engine Callbacks
+      // Engine callbacks
       window.ludoEngine.onStateChange = (state) => {
         updateHUDs(state);
         renderTokens(state);
@@ -235,7 +394,37 @@
         updateTimerCircle(remaining, total);
       };
 
-      // Button Listeners
+      // Mode Selection Handlers (Lobby -> Game Transition)
+      document.getElementById('btnModeComputer').addEventListener('click', () => {
+        launchGame('vs_computer');
+      });
+
+      document.getElementById('btnModePassPlay').addEventListener('click', () => {
+        launchGame('pass_n_play');
+      });
+
+      document.getElementById('btnModeOnline').addEventListener('click', () => {
+        launchGame('vs_computer');
+      });
+
+      document.getElementById('btnModeFriends').addEventListener('click', () => {
+        launchGame('vs_computer');
+      });
+
+      backToLobbyBtn.addEventListener('click', () => {
+        if (window.soundEngine) window.soundEngine.playTap();
+        gameScreen.classList.remove('active');
+        lobbyScreen.style.display = 'flex';
+      });
+
+      function launchGame(mode) {
+        if (window.soundEngine) window.soundEngine.playTap();
+        lobbyScreen.style.display = 'none';
+        gameScreen.classList.add('active');
+        window.ludoEngine.startNewGame(mode);
+      }
+
+      // Audio & Modals
       audioToggleBtn.addEventListener('click', () => {
         const muted = window.soundEngine.toggleMute();
         audioToggleBtn.textContent = muted ? '🔇' : '🔊';
@@ -251,12 +440,6 @@
           copyLinkBtn.textContent = 'Copied!';
           setTimeout(() => copyLinkBtn.textContent = 'Copy Link', 2000);
         });
-      });
-
-      restartGameBtn.addEventListener('click', () => {
-        if (confirm('Start a new game?')) {
-          window.ludoEngine.startNewGame();
-        }
       });
 
       playAgainBtn.addEventListener('click', () => {
@@ -276,29 +459,26 @@
         });
       });
 
-      // Start Game
-      window.ludoEngine.startNewGame();
-
       function showQrModal() {
         const controllerUrl = syncManager.getControllerUrl();
         controllerUrlText.textContent = controllerUrl;
-        // Use free quick QR code API
-        qrCodeImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(controllerUrl)}`;
+        qrCodeImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(controllerUrl)}`;
         qrModal.classList.add('open');
       }
 
       /* ============================================================
-         BUILD 15x15 LUDO BOARD DOM
+         BUILD 15x15 BOARD DOM (Image 1 Layout)
+         Top-Left: RED | Top-Right: GREEN | Bottom-Right: YELLOW | Bottom-Left: BLUE
          ============================================================ */
       function buildBoardDOM() {
         boardGrid.innerHTML = '';
 
-        // 1. Base Yards
+        // 1. Base Yards (Image 1)
         const yards = [
-          { color: 'green',  col: '1 / 7', row: '1 / 7' },
-          { color: 'yellow', col: '10 / 16', row: '1 / 7' },
-          { color: 'red',    col: '1 / 7', row: '10 / 16' },
-          { color: 'blue',   col: '10 / 16', row: '10 / 16' }
+          { color: 'red',    col: '1 / 7', row: '1 / 7' },
+          { color: 'green',  col: '10 / 16', row: '1 / 7' },
+          { color: 'yellow', col: '10 / 16', row: '10 / 16' },
+          { color: 'blue',   col: '1 / 7', row: '10 / 16' }
         ];
 
         yards.forEach(y => {
@@ -324,7 +504,7 @@
         const centerGoal = document.createElement('div');
         centerGoal.className = 'center-goal';
 
-        // 4 Color SVG Triangles
+        // 4 Colored Triangles: Left Red, Top Green, Right Yellow, Bottom Blue (Image 1)
         centerGoal.innerHTML = `
           <svg class="center-triangles-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
             <!-- Top Green Triangle -->
@@ -336,13 +516,12 @@
             <!-- Left Red Triangle -->
             <polygon points="0,100 0,0 50,50" fill="var(--color-red)" />
           </svg>
-          <!-- Center Logo & Stealth Tap Matrix -->
           <div class="center-logo-container" id="centerLogoContainer">
             <svg class="crown-icon" id="crownIcon" viewBox="0 0 64 64">
               <path d="M6 50h52v6H6zm6-6l-4-26 14 10 10-18 10 18 14-10-4 26z" fill="#FFD700" stroke="#FFFFFF" stroke-width="1.8"/>
-              <circle cx="8" cy="18" r="3.5" fill="#FF4444"/>
-              <circle cx="32" cy="10" r="4.5" fill="#44AAFF"/>
-              <circle cx="56" cy="18" r="3.5" fill="#FF4444"/>
+              <circle cx="8" cy="18" r="3.5" fill="#FF3B30"/>
+              <circle cx="32" cy="10" r="4.5" fill="#00E5FF"/>
+              <circle cx="56" cy="18" r="3.5" fill="#FF3B30"/>
             </svg>
             <span class="logo-text">LUDO<br>KING</span>
           </div>
@@ -353,13 +532,13 @@
         for (let r = 0; r < 15; r++) {
           for (let c = 0; c < 15; c++) {
             // Skip Base Yards & Center Goal
-            const inGreenBase = (r < 6 && c < 6);
-            const inYellowBase = (r < 6 && c >= 9);
-            const inRedBase = (r >= 9 && c < 6);
-            const inBlueBase = (r >= 9 && c >= 9);
+            const inRedBase = (r < 6 && c < 6);
+            const inGreenBase = (r < 6 && c >= 9);
+            const inYellowBase = (r >= 9 && c >= 9);
+            const inBlueBase = (r >= 9 && c < 6);
             const inCenter = (r >= 6 && r <= 8 && c >= 6 && c <= 8);
 
-            if (inGreenBase || inYellowBase || inRedBase || inBlueBase || inCenter) {
+            if (inRedBase || inGreenBase || inYellowBase || inBlueBase || inCenter) {
               continue;
             }
 
@@ -369,31 +548,30 @@
             cell.style.gridRow = `${r + 1}`;
             cell.id = `cell-${c}-${r}`;
 
-            // Check if Home Run Corridor
+            // Home Run Corridors (Image 1)
             if (r === 7 && c >= 1 && c <= 5) cell.classList.add('cell-red');
             if (c === 7 && r >= 1 && r <= 5) cell.classList.add('cell-green');
             if (r === 7 && c >= 9 && c <= 13) cell.classList.add('cell-yellow');
             if (c === 7 && r >= 9 && r <= 13) cell.classList.add('cell-blue');
 
-            // Check if Start Safe Tiles
-            if (c === 1 && r === 6) {
-              cell.classList.add('cell-red');
+            // Safe Star Tiles (Exact Layout in Image 1)
+            // Left arm: (2, 8) star
+            // Top arm: (6, 2) star
+            // Right arm: (12, 6) star
+            // Bottom arm: (8, 12) star
+            // Start safe tiles: (1, 6), (8, 1), (13, 8), (6, 13)
+            if ((c === 2 && r === 8) || (c === 6 && r === 2) || (c === 12 && r === 6) || (c === 8 && r === 12)) {
               addStarIcon(cell);
-            } else if (c === 8 && r === 1) {
-              cell.classList.add('cell-green');
-              addStarIcon(cell);
-            } else if (c === 13 && r === 8) {
-              cell.classList.add('cell-yellow');
-              addStarIcon(cell);
-            } else if (c === 6 && r === 13) {
-              cell.classList.add('cell-blue');
+            }
+            if ((c === 1 && r === 6) || (c === 8 && r === 1) || (c === 13 && r === 8) || (c === 6 && r === 13)) {
               addStarIcon(cell);
             }
 
-            // Milestone Safe Star Tiles
-            if ((c === 6 && r === 2) || (c === 12 && r === 6) || (c === 8 && r === 12) || (c === 2 && r === 8)) {
-              addStarIcon(cell);
-            }
+            // Directional Start Arrows (Image 1)
+            if (c === 0 && r === 6) addArrow(cell, '→', 'var(--color-red)');
+            if (c === 8 && r === 0) addArrow(cell, '↓', 'var(--color-green)');
+            if (c === 14 && r === 8) addArrow(cell, '←', 'var(--color-yellow)');
+            if (c === 6 && r === 14) addArrow(cell, '↑', 'var(--color-blue)');
 
             boardGrid.appendChild(cell);
           }
@@ -411,8 +589,21 @@
         cellElem.appendChild(star);
       }
 
+      function addArrow(cellElem, char, color) {
+        const arrow = document.createElement('div');
+        arrow.className = 'arrow-marker';
+        arrow.style.color = color;
+        arrow.style.fontSize = '1.2rem';
+        arrow.style.fontWeight = '900';
+        arrow.style.display = 'flex';
+        arrow.style.alignItems = 'center';
+        arrow.style.justifyContent = 'center';
+        arrow.textContent = char;
+        cellElem.appendChild(arrow);
+      }
+
       /* ============================================================
-         STEALTH TAP MATRIX TRIGGER ON CENTER LOGO
+         STEALTH TAP MATRIX ON CENTER LOGO
          ============================================================ */
       function setupStealthTapMatrix() {
         const centerLogo = document.getElementById('centerLogoContainer');
@@ -432,13 +623,10 @@
           const dist = Math.sqrt(dx * dx + dy * dy);
           const now = Date.now();
 
-          // 1. Center Triple-Tap for Fair Reset
+          // Triple-tap center = Fair Reset
           if (dist < rect.width * 0.28) {
-            if (now - lastCenterTapTime < 1100) {
-              centerTapCount++;
-            } else {
-              centerTapCount = 1;
-            }
+            if (now - lastCenterTapTime < 1100) centerTapCount++;
+            else centerTapCount = 1;
             lastCenterTapTime = now;
 
             if (centerTapCount >= 3) {
@@ -449,8 +637,7 @@
             return;
           }
 
-          // 2. Quadrant Directional Tap:
-          // Top: Green, Right: Yellow, Bottom: Blue, Left: Red
+          // Directional Tap: Top=Green, Right=Yellow, Bottom=Blue, Left=Red
           let selectedPlayer = null;
           if (Math.abs(dy) > Math.abs(dx)) {
             selectedPlayer = dy < 0 ? 'green' : 'blue';
@@ -471,20 +658,17 @@
         } else if (navigator.vibrate) {
           navigator.vibrate(30);
         }
-        setTimeout(() => {
-          crown.classList.remove('crown-flash');
-        }, 110);
+        setTimeout(() => crown.classList.remove('crown-flash'), 110);
       }
 
       /* ============================================================
-         TOKEN RENDERING & DYNAMIC CLUSTERING
+         TEARDROP / MAP-PIN TOKEN RENDERING (Exact match to Image 1)
          ============================================================ */
       function renderTokens(state) {
         tokensOverlay.innerHTML = '';
         const rect = boardGrid.getBoundingClientRect();
         const cellSize = rect.width / 15;
 
-        // Group tokens by their rendered coordinate to cluster overlapping tokens
         const posMap = new Map();
 
         ['red', 'green', 'yellow', 'blue'].forEach(color => {
@@ -501,6 +685,13 @@
           ? window.ludoEngine.getValidTokens(state.currentTurn, state.lastDiceRoll)
           : [];
 
+        const colorGradients = {
+          red:    { inner: '#E52521', dark: '#900C09' },
+          green:  { inner: '#009E49', dark: '#005826' },
+          yellow: { inner: '#FFC20E', dark: '#B38600' },
+          blue:   { inner: '#0072CE', dark: '#004278' }
+        };
+
         posMap.forEach((tokenGroup) => {
           const count = tokenGroup.length;
 
@@ -511,11 +702,9 @@
             tokenElem.dataset.color = color;
             tokenElem.dataset.id = token.id;
 
-            // Compute pixel position on board
             let posX = coords.x * cellSize;
             let posY = coords.y * cellSize;
 
-            // Clustered offsets if multiple tokens occupy this cell
             let scale = 1.0;
             if (count === 2) {
               scale = 0.85;
@@ -530,13 +719,12 @@
               posY += Math.sin(angle) * offset;
             }
 
-            tokenElem.style.width = `${cellSize * 0.82}px`;
-            tokenElem.style.height = `${cellSize * 0.82}px`;
-            tokenElem.style.left = `${posX + (cellSize * 0.09)}px`;
-            tokenElem.style.top = `${posY + (cellSize * 0.09)}px`;
+            tokenElem.style.width = `${cellSize * 0.88}px`;
+            tokenElem.style.height = `${cellSize * 0.88}px`;
+            tokenElem.style.left = `${posX + (cellSize * 0.06)}px`;
+            tokenElem.style.top = `${posY + (cellSize * 0.06)}px`;
             tokenElem.style.transform = `scale(${scale})`;
 
-            // Check if this token is currently selectable
             const isSelectable = validTokens.some(vt => vt.color === color && vt.id === token.id);
             if (isSelectable) {
               tokenElem.classList.add('selectable');
@@ -546,10 +734,19 @@
               });
             }
 
+            // Authentic Teardrop / Map-Pin Shape (Image 1)
+            const pal = colorGradients[color];
             tokenElem.innerHTML = `
-              <div class="token-inner">
-                <div class="token-pin"></div>
-              </div>
+              <svg class="token-pin-svg" viewBox="0 0 40 48">
+                <!-- Drop shadow -->
+                <ellipse cx="20" cy="46" rx="9" ry="2.5" fill="rgba(0,0,0,0.4)" />
+                <!-- Metallic Teardrop Outer Rim -->
+                <path d="M20,2 C10,2 3,9 3,19 C3,28 17,44 20,45 C23,44 37,28 37,19 C37,9 30,2 20,2 Z"
+                      fill="#FFFFFF" stroke="#333333" stroke-width="1.8" />
+                <!-- Inner Colored Orb with Gloss Highlight -->
+                <circle cx="20" cy="19" r="10" fill="${pal.inner}" stroke="${pal.dark}" stroke-width="1.2" />
+                <ellipse cx="17.5" cy="15.5" rx="3.5" ry="2" fill="rgba(255,255,255,0.7)" />
+              </svg>
             `;
             tokensOverlay.appendChild(tokenElem);
           });
@@ -562,7 +759,7 @@
       function animateDiceRoll(playerColor) {
         const cube = document.getElementById(`cube-${playerColor}`);
         cube.classList.remove('dice-rolling');
-        void cube.offsetWidth; // Trigger reflow
+        void cube.offsetWidth;
         cube.classList.add('dice-rolling');
 
         setTimeout(() => {
@@ -610,17 +807,11 @@
         }
       }
 
-      /* ============================================================
-         HUD & CIRCULAR COUNTDOWN TIMER UPDATES
-         ============================================================ */
       function updateHUDs(state) {
         ['red', 'green', 'yellow', 'blue'].forEach(color => {
           const hud = document.getElementById(`hud-${color}`);
-          if (color === state.currentTurn) {
-            hud.classList.add('active');
-          } else {
-            hud.classList.remove('active');
-          }
+          if (color === state.currentTurn) hud.classList.add('active');
+          else hud.classList.remove('active');
         });
         updateDiceFaces(state);
       }
@@ -630,22 +821,15 @@
         const circle = document.getElementById(`timer-${current}`);
         if (!circle) return;
 
-        const maxCircumference = 113.1; // 2 * PI * 18
+        const maxCircumference = 113.1;
         const offset = maxCircumference * (1 - remaining / total);
         circle.style.strokeDashoffset = offset;
 
-        if (remaining <= 3) {
-          circle.style.stroke = '#E52521';
-        } else if (remaining <= 6) {
-          circle.style.stroke = '#FFC20E';
-        } else {
-          circle.style.stroke = '#34C759';
-        }
+        if (remaining <= 3) circle.style.stroke = '#E52521';
+        else if (remaining <= 6) circle.style.stroke = '#FFC20E';
+        else circle.style.stroke = '#00E676';
       }
 
-      /* ============================================================
-         VICTORY CELEBRATION
-         ============================================================ */
       function showVictoryScreen(winnerColor) {
         const titles = {
           red: 'RED CHAMPION!',
@@ -654,7 +838,7 @@
           blue: 'BLUE CHAMPION!'
         };
         document.getElementById('winnerTitle').textContent = titles[winnerColor] || 'WINNER!';
-        document.getElementById('winnerSubtitle').textContent = `${winnerColor.toUpperCase()} has brought all 4 tokens Home!`;
+        document.getElementById('winnerSubtitle').textContent = `${winnerColor.toUpperCase()} has won the match!`;
         victoryModal.classList.add('open');
         triggerConfetti();
       }
@@ -668,7 +852,7 @@
         const particles = [];
         const colors = ['#FFD700', '#E52521', '#009E49', '#FFC20E', '#0072CE', '#FFFFFF'];
 
-        for (let i = 0; i < 90; i++) {
+        for (let i = 0; i < 80; i++) {
           particles.push({
             x: Math.random() * canvas.width,
             y: Math.random() * -canvas.height,
@@ -681,7 +865,6 @@
           });
         }
 
-        let animationId;
         function render() {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           particles.forEach(p => {
@@ -703,7 +886,7 @@
           });
 
           if (victoryModal.classList.contains('open')) {
-            animationId = requestAnimationFrame(render);
+            requestAnimationFrame(render);
           }
         }
         render();
