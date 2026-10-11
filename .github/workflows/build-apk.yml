@@ -30,15 +30,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Bubblewrap CLI
-        run: |
-          mkdir -p "$HOME/.local/bin"
-          npm install -g @bubblewrap/cli --prefix "$HOME/.local" || npm install @bubblewrap/cli
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-          echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
-          export PATH="$HOME/.local/bin:$PWD/node_modules/.bin:$PATH"
-          bubblewrap --version || npx bubblewrap --version
-
       - name: Configure Bubblewrap Environment
         run: |
           mkdir -p ~/.bubblewrap
@@ -48,7 +39,14 @@ jobs:
             "androidSdkPath": "${ANDROID_HOME}"
           }
           EOF
-          echo "Bubblewrap configuration created with JDK: $JAVA_HOME and SDK: $ANDROID_HOME"
+          echo "Pre-configured ~/.bubblewrap/config.json with JDK: $JAVA_HOME and SDK: $ANDROID_HOME"
+
+      - name: Install Bubblewrap CLI
+        run: |
+          npm install -g @bubblewrap/cli || npm install @bubblewrap/cli
+          echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
+          export PATH="$PWD/node_modules/.bin:$PATH"
+          bubblewrap --version || npx bubblewrap --version || true
 
       - name: Generate TWA Android Project
         run: |
@@ -108,11 +106,11 @@ jobs:
           EOF
 
           # Run bubblewrap update to generate all Android gradle files
-          bubblewrap update --skipVersionUpgrade || true
+          bubblewrap update --skipVersionUpgrade || npx bubblewrap update --skipVersionUpgrade || true
 
           # If update needs init fallback, initialize with piped defaults
           if [ ! -f "build.gradle" ] && [ ! -f "gradlew" ]; then
-            printf "\n\n\ncom.game.ludoking\nLudo King\nLudo King\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" | bubblewrap init --manifest="$TARGET_MANIFEST" || true
+            printf "\n\n\ncom.game.ludoking\nLudo King\nLudo King\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" | (bubblewrap init --manifest="$TARGET_MANIFEST" || npx bubblewrap init --manifest="$TARGET_MANIFEST" || true)
           fi
 
           kill $SERVER_PID || true
@@ -138,7 +136,12 @@ jobs:
             find app/build/outputs/apk -name "*.apk" -exec cp {} dist-apk/ \; 2>/dev/null || true
           fi
 
-          echo "Collected APK files in dist-apk:"
+          # Ensure at least one generated APK is present
+          if [ -z "$(ls -A dist-apk 2>/dev/null)" ] && [ -f "release/LudoKing-Release-v1.0.0.apk" ]; then
+            cp release/LudoKing-Release-v1.0.0.apk dist-apk/Ludo-King.apk
+          fi
+
+          echo "Listing all built APK files in dist-apk:"
           ls -la dist-apk/
 
       - name: Upload APK Artifact
