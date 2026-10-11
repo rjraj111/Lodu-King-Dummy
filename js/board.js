@@ -297,7 +297,7 @@ class BoardManager {
 
     // Goal Arrival
     if (token.step === 56) {
-      if (window.soundEngine) window.soundEngine.playSafeTileChime();
+      if (window.soundEngine) window.soundEngine.playPanta();
       getsBonusTurn = true;
 
       if (this.players[playerColor].tokens.every(t => t.step === 56)) {
@@ -314,7 +314,7 @@ class BoardManager {
         if (window.soundEngine) window.soundEngine.playSafeTileChime();
       } else if (globalTile !== -1) {
         // Capture Opponent
-        const victim = this._checkAndExecuteCapture(playerColor, globalTile);
+        const victim = await this._checkAndExecuteCapture(playerColor, globalTile);
         if (victim) {
           if (window.soundEngine) window.soundEngine.playCaptureExplosion();
           getsBonusTurn = true;
@@ -332,12 +332,19 @@ class BoardManager {
     }
   }
 
-  _checkAndExecuteCapture(attackerColor, globalTile) {
+  async _checkAndExecuteCapture(attackerColor, globalTile) {
     const opponents = this.playersOrder.filter(c => c !== attackerColor);
     for (const opp of opponents) {
       for (const token of this.players[opp].tokens) {
         if (token.step >= 0 && token.step <= 50) {
           if (this.getGlobalTileIndex(opp, token.step) === globalTile) {
+            const currentStep = token.step;
+            // Backtrack animation step by step like MainActivity.java in Ludo King Clone
+            for (let s = currentStep - 1; s >= 0; s -= 2) {
+              token.step = s;
+              this._notifyState();
+              await new Promise(r => setTimeout(r, 22));
+            }
             token.step = -1;
             this._notifyState();
             return { color: opp, token };

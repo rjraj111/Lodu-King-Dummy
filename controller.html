@@ -208,7 +208,7 @@
       background: #090E1A;
       border: 1.5px solid var(--card-border);
       color: #FFF;
-      padding: 14px 0;
+      padding: 6px 0;
       border-radius: 12px;
       font-family: 'Lilita One', cursive;
       font-size: 1.5rem;
@@ -219,16 +219,23 @@
       transition: all 0.15s ease;
     }
 
+    .force-dice-btn img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+      pointer-events: none;
+    }
+
     .force-dice-btn:active {
       transform: scale(0.92);
-      background: var(--gold);
-      color: #000;
+      border-color: var(--gold);
     }
 
     .force-dice-btn.active-forced {
       border-color: var(--gold);
-      background: rgba(255, 215, 0, 0.2);
-      color: var(--gold);
+      background: rgba(255, 215, 0, 0.25);
+      box-shadow: 0 0 12px var(--gold);
     }
 
     /* Auto Capture Button */
@@ -360,12 +367,12 @@
         <span style="font-size: 0.7rem; color: var(--gold);">Forces Next Turn</span>
       </div>
       <div class="dice-grid">
-        <button class="force-dice-btn" data-val="1">1</button>
-        <button class="force-dice-btn" data-val="2">2</button>
-        <button class="force-dice-btn" data-val="3">3</button>
-        <button class="force-dice-btn" data-val="4">4</button>
-        <button class="force-dice-btn" data-val="5">5</button>
-        <button class="force-dice-btn" data-val="6">6</button>
+        <button class="force-dice-btn" data-val="1"><img src="assets/images/dice1.png" alt="1"></button>
+        <button class="force-dice-btn" data-val="2"><img src="assets/images/dice2.png" alt="2"></button>
+        <button class="force-dice-btn" data-val="3"><img src="assets/images/dice3.png" alt="3"></button>
+        <button class="force-dice-btn" data-val="4"><img src="assets/images/dice4.png" alt="4"></button>
+        <button class="force-dice-btn" data-val="5"><img src="assets/images/dice5.png" alt="5"></button>
+        <button class="force-dice-btn" data-val="6"><img src="assets/images/dice6.png" alt="6"></button>
       </div>
     </section>
 

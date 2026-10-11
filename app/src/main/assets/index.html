@@ -107,12 +107,14 @@
       <header class="lobby-top-hud">
         <div class="hud-left-profile">
           <div class="user-avatar-circle" id="userProfileBtn">
-            <div class="avatar-inner-img"></div>
+            <img src="assets/images/p1.png" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />
             <span class="avatar-online-dot"></span>
             <span class="avatar-level-star">1</span>
           </div>
           <div style="display: flex; gap: 6px;">
-            <button class="hud-btn-circle" id="btnSettingsLobby" title="Settings">⚙️</button>
+            <button class="hud-btn-circle" id="btnSettingsLobby" title="Settings">
+              <img src="assets/images/settings.png" alt="Settings" style="width: 20px; height: 20px; object-fit: contain;" />
+            </button>
             <button class="hud-btn-circle" id="btnMailLobby" title="Mail">
               ✉️
               <span class="hud-badge-dot"></span>
@@ -122,12 +124,12 @@
 
         <div class="hud-right-currency">
           <div class="currency-pill">
-            <span>💎</span>
+            <img src="assets/images/diamond.png" alt="Diamonds" style="width: 18px; height: 18px; object-fit: contain;" />
             <span>50</span>
             <span class="currency-add">+</span>
           </div>
           <div class="currency-pill">
-            <span>🪙</span>
+            <img src="assets/images/coins.png" alt="Coins" style="width: 19px; height: 19px; object-fit: contain;" />
             <span>3,850</span>
             <span class="currency-add">+</span>
           </div>
@@ -200,13 +202,15 @@
         </div>
       </div>
 
-      <!-- 5 Primary Game Mode Buttons (Image 3) -->
+      <!-- 5 Primary Game Mode Buttons (Image 3 / Authentic Clone) -->
       <section class="modes-container">
         <div class="modes-top-row">
           <!-- 1. ONLINE -->
           <div class="mode-card-btn" id="btnPlayOnline">
             <div class="mode-card-inner">
-              <div class="mode-icon-hero">🌐</div>
+              <div class="mode-icon-hero">
+                <img src="assets/images/playonline2.png" alt="Online" class="mode-img-hero" />
+              </div>
               <div class="mode-card-title">ONLINE</div>
               <div class="mode-players-counter">● Players: 276,615</div>
             </div>
@@ -214,7 +218,9 @@
           <!-- 2. TEAM UP -->
           <div class="mode-card-btn" id="btnPlayTeamUp">
             <div class="mode-card-inner">
-              <div class="mode-icon-hero">⚔️</div>
+              <div class="mode-icon-hero">
+                <img src="assets/images/computer.png" alt="Team Up" class="mode-img-hero" style="filter: hue-rotate(180deg);" />
+              </div>
               <div class="mode-card-title">TEAM UP</div>
               <div class="mode-players-counter">● Players: 6,512</div>
             </div>
@@ -222,7 +228,9 @@
           <!-- 3. FRIENDS -->
           <div class="mode-card-btn" id="btnPlayFriends">
             <div class="mode-card-inner">
-              <div class="mode-icon-hero">❤️</div>
+              <div class="mode-icon-hero">
+                <img src="assets/images/playwithfriends.png" alt="Friends" class="mode-img-hero" />
+              </div>
               <div class="mode-card-title">FRIENDS</div>
               <div class="mode-players-counter">● Players: 40,183</div>
             </div>
@@ -233,14 +241,18 @@
           <!-- 4. VS COMPUTER -->
           <div class="mode-card-btn" id="btnVsComputer">
             <div class="mode-card-inner">
-              <div class="mode-icon-hero">📱</div>
+              <div class="mode-icon-hero">
+                <img src="assets/images/computer.png" alt="Vs Computer" class="mode-img-hero" />
+              </div>
               <div class="mode-card-title">VS COMPUTER</div>
             </div>
           </div>
           <!-- 5. PASS N PLAY -->
           <div class="mode-card-btn" id="btnPassNPlay">
             <div class="mode-card-inner">
-              <div class="mode-icon-hero">👥</div>
+              <div class="mode-icon-hero">
+                <img src="assets/images/passnplay.png" alt="Pass N Play" class="mode-img-hero" />
+              </div>
               <div class="mode-card-title">PASS N PLAY</div>
             </div>
           </div>
@@ -418,18 +430,9 @@
          SCREEN 5: AUTHENTIC IN-GAME BOARD SCREEN (Reference Images)
          ============================================================ -->
     <main class="game-view ludo-wallpaper" id="game-view">
-      <!-- 3D Animated Bobbing Turn Arrow -->
+      <!-- 3D Animated Bobbing Turn Arrow (Authentic Ludo King) -->
       <div class="turn-pointer-arrow" id="turnPointerArrow">
-        <svg viewBox="0 0 32 40" width="32" height="40">
-          <defs>
-            <linearGradient id="arrowGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#FFD700"/>
-              <stop offset="60%" stop-color="#FF9900"/>
-              <stop offset="100%" stop-color="#E65100"/>
-            </linearGradient>
-          </defs>
-          <polygon points="16,38 2,14 10,14 10,2 22,2 22,14 30,14" fill="url(#arrowGrad)" stroke="#FFFFFF" stroke-width="2"/>
-        </svg>
+        <img src="assets/images/arrow_dice_hint.png" alt="Arrow" id="hintArrowImg" style="width: 34px; height: 42px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));" />
       </div>
 
       <!-- TOP CORNER HUD ROW: Red (Top-Left) & Green (Top-Right) -->
@@ -441,28 +444,24 @@
               <circle class="timer-bg-ring" cx="22" cy="22" r="18" />
               <circle class="timer-fg-ring" id="timer-ring-red" cx="22" cy="22" r="18" />
             </svg>
-            <div class="pill-avatar-disc" id="avatar-red" style="background: var(--color-red);">
-              <svg viewBox="0 0 40 48" width="20" height="20">
-                <path d="M20,2 C10,2 4,12 4,22 C4,32 17,44 20,45 C23,44 36,32 36,22 C36,12 30,2 20,2 Z" fill="#FFF"/>
-              </svg>
+            <div class="pill-avatar-disc" id="avatar-red" style="background: var(--color-red); overflow: hidden; padding: 0;">
+              <img src="assets/images/p2.png" alt="Red Player" style="width: 100%; height: 100%; object-fit: cover;" />
             </div>
           </div>
           <div class="pill-meta-col">
             <span class="pill-player-name" id="name-red">Player 2</span>
           </div>
           <div class="pill-dice-slot clickable" id="diceslot-red" data-color="red" title="Roll Dice">
-            <div class="dice-cube" id="cube-red">
-              <div class="dice-face" id="face-red"></div>
-            </div>
+            <div class="dice-pad-bg pad-left"></div>
+            <img class="dice-img" id="diceimg-red" src="assets/images/dice6.png" alt="Dice" />
           </div>
         </div>
 
         <!-- Player 3 (Green): Placed directly above Green base -->
         <div class="player-hud-pill box-green" id="corner-green">
           <div class="pill-dice-slot" id="diceslot-green" data-color="green" title="Roll Dice">
-            <div class="dice-cube" id="cube-green">
-              <div class="dice-face" id="face-green"></div>
-            </div>
+            <div class="dice-pad-bg pad-right"></div>
+            <img class="dice-img" id="diceimg-green" src="assets/images/dice6.png" alt="Dice" />
           </div>
           <div class="pill-meta-col" style="text-align: right;">
             <span class="pill-player-name" id="name-green">Player 3</span>
@@ -472,10 +471,8 @@
               <circle class="timer-bg-ring" cx="22" cy="22" r="18" />
               <circle class="timer-fg-ring" id="timer-ring-green" cx="22" cy="22" r="18" />
             </svg>
-            <div class="pill-avatar-disc" id="avatar-green" style="background: var(--color-green);">
-              <svg viewBox="0 0 40 48" width="20" height="20">
-                <path d="M20,2 C10,2 4,12 4,22 C4,32 17,44 20,45 C23,44 36,32 36,22 C36,12 30,2 20,2 Z" fill="#FFF"/>
-              </svg>
+            <div class="pill-avatar-disc" id="avatar-green" style="background: var(--color-green); overflow: hidden; padding: 0;">
+              <img src="assets/images/p3.png" alt="Green Player" style="width: 100%; height: 100%; object-fit: cover;" />
             </div>
           </div>
         </div>
@@ -499,28 +496,24 @@
               <circle class="timer-bg-ring" cx="22" cy="22" r="18" />
               <circle class="timer-fg-ring" id="timer-ring-blue" cx="22" cy="22" r="18" />
             </svg>
-            <div class="pill-avatar-disc" id="avatar-blue" style="background: var(--color-blue);">
-              <svg viewBox="0 0 40 48" width="20" height="20">
-                <path d="M20,2 C10,2 4,12 4,22 C4,32 17,44 20,45 C23,44 36,32 36,22 C36,12 30,2 20,2 Z" fill="#FFF"/>
-              </svg>
+            <div class="pill-avatar-disc" id="avatar-blue" style="background: var(--color-blue); overflow: hidden; padding: 0;">
+              <img src="assets/images/p1.png" alt="Blue Player" style="width: 100%; height: 100%; object-fit: cover;" />
             </div>
           </div>
           <div class="pill-meta-col">
             <span class="pill-player-name" id="name-blue">Player 1</span>
           </div>
           <div class="pill-dice-slot" id="diceslot-blue" data-color="blue" title="Roll Dice">
-            <div class="dice-cube" id="cube-blue">
-              <div class="dice-face" id="face-blue"></div>
-            </div>
+            <div class="dice-pad-bg pad-left"></div>
+            <img class="dice-img" id="diceimg-blue" src="assets/images/dice6.png" alt="Dice" />
           </div>
         </div>
 
         <!-- Player 4 (Yellow): Placed directly below Yellow base -->
         <div class="player-hud-pill box-yellow" id="corner-yellow">
           <div class="pill-dice-slot" id="diceslot-yellow" data-color="yellow" title="Roll Dice">
-            <div class="dice-cube" id="cube-yellow">
-              <div class="dice-face" id="face-yellow"></div>
-            </div>
+            <div class="dice-pad-bg pad-right"></div>
+            <img class="dice-img" id="diceimg-yellow" src="assets/images/dice6.png" alt="Dice" />
           </div>
           <div class="pill-meta-col" style="text-align: right;">
             <span class="pill-player-name" id="name-yellow">Player 4</span>
@@ -530,10 +523,8 @@
               <circle class="timer-bg-ring" cx="22" cy="22" r="18" />
               <circle class="timer-fg-ring" id="timer-ring-yellow" cx="22" cy="22" r="18" />
             </svg>
-            <div class="pill-avatar-disc" id="avatar-yellow" style="background: var(--color-yellow);">
-              <svg viewBox="0 0 40 48" width="20" height="20">
-                <path d="M20,2 C10,2 4,12 4,22 C4,32 17,44 20,45 C23,44 36,32 36,22 C36,12 30,2 20,2 Z" fill="#FFF"/>
-              </svg>
+            <div class="pill-avatar-disc" id="avatar-yellow" style="background: var(--color-yellow); overflow: hidden; padding: 0;">
+              <img src="assets/images/p4.png" alt="Yellow Player" style="width: 100%; height: 100%; object-fit: cover;" />
             </div>
           </div>
         </div>
@@ -541,10 +532,8 @@
 
       <!-- Bottom Corner Controls: Orange Menu on left & NO ADS on right -->
       <div class="game-bottom-controls-row">
-        <button class="in-game-menu-btn" id="btnGameMenu" title="Pause / Menu">
-          <svg viewBox="0 0 32 32" width="22" height="22">
-            <path d="M5 8h22M5 16h22M5 24h22" stroke="#FFF" stroke-width="3.5" stroke-linecap="round"/>
-          </svg>
+        <button class="in-game-menu-btn" id="btnGameMenu" title="Pause / Menu" style="background: transparent; border: none; padding: 0; cursor: pointer;">
+          <img src="assets/images/ingamemenubtn.png" alt="Menu" style="width: 36px; height: 36px; object-fit: contain; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.5));" />
         </button>
         <div class="no-ads-badge" id="btnNoAds" title="No Ads">
           <div class="no-ads-circle">
@@ -557,23 +546,23 @@
 
   </div>
 
-  <!-- PAUSE / IN-GAME MENU MODAL -->
+  <!-- PAUSE / IN-GAME MENU MODAL (Authentic Quit Dialog) -->
   <div class="setup-modal-backdrop" id="pauseModal">
-    <div class="pause-menu-card">
-      <h3 class="pause-title">GAME PAUSED</h3>
+    <div class="pause-menu-card" style="text-align: center; max-width: 330px; padding: 22px 18px;">
+      <h3 class="pause-title" style="margin-bottom: 16px;">GAME PAUSED</h3>
       <button class="btn-menu-action" id="btnResumeGame">RESUME GAME</button>
       <button class="btn-menu-action" id="btnPauseSoundToggle">SOUND: ON</button>
-      <button class="btn-menu-action" id="btnExitLobby" style="color: #FF8A80;">EXIT TO LOBBY</button>
+      <button class="btn-menu-action" id="btnPauseMusicToggle">MUSIC: ON</button>
+      <button class="btn-menu-action" id="btnExitLobby" style="color: #FF5252; border-color: rgba(255,82,82,0.6);">EXIT TO LOBBY</button>
     </div>
   </div>
 
-  <!-- VICTORY MODAL -->
+  <!-- VICTORY MODAL (Authentic Gametion Winner Display) -->
   <div class="victory-modal" id="victoryModal">
     <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
-    <div class="pause-menu-card" style="text-align: center; max-width: 340px;">
-      <svg style="width: 70px; height: 70px; margin: 0 auto 8px;" viewBox="0 0 64 64">
-        <path d="M6 50h52v6H6zm6-6l-4-26 14 10 10-18 10 18 14-10-4 26z" fill="#FFD700" stroke="#FFF" stroke-width="2"/>
-      </svg>
+    <div class="pause-menu-card" style="text-align: center; max-width: 350px; padding: 24px 20px;">
+      <img src="assets/images/congratsscreentoplogo.png" alt="Congratulations" style="width: 210px; margin: 0 auto 10px; display: block;" />
+      <img src="assets/images/winnercrown.png" alt="Crown" style="width: 64px; margin: 0 auto 10px; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));" />
       <h2 style="font-family: var(--font-game); font-size: 2rem; color: var(--gold-primary);" id="winnerTitle">WINNER!</h2>
       <p style="font-size: 0.95rem; color: #E2E8F0; margin-bottom: 20px;" id="winnerSubtitle">Player conquered the board!</p>
       <button class="btn-play-primary" id="btnPlayAgain">PLAY AGAIN</button>
@@ -673,6 +662,14 @@
         btnPauseSoundToggle.addEventListener('click', () => {
           const muted = window.soundEngine.toggleMute();
           btnPauseSoundToggle.textContent = muted ? 'SOUND: OFF' : 'SOUND: ON';
+        });
+      }
+
+      const btnPauseMusicToggle = document.getElementById('btnPauseMusicToggle');
+      if (btnPauseMusicToggle) {
+        btnPauseMusicToggle.addEventListener('click', () => {
+          const musicOn = window.soundEngine.toggleMusic();
+          btnPauseMusicToggle.textContent = musicOn ? 'MUSIC: ON' : 'MUSIC: OFF';
         });
       }
 
@@ -901,7 +898,7 @@
       }
 
       /* ============================================================
-         PIN-SHAPED 3D TOKEN RENDERING
+         AUTHENTIC 3D SPRITE TOKEN RENDERING (Matching Ludo King)
          ============================================================ */
       function renderPinTokens(state) {
         tokensOverlay.innerHTML = '';
@@ -924,12 +921,7 @@
           ? window.boardManager.getValidTokens(state.currentTurn, state.lastDiceRoll)
           : [];
 
-        const colorPalettes = {
-          red:    { inner: '#E52521', dark: '#900C09' },
-          green:  { inner: '#009E49', dark: '#005826' },
-          blue:   { inner: '#0072CE', dark: '#004278' },
-          yellow: { inner: '#FFC20E', dark: '#B38600' }
-        };
+        const isStylish = window.boardManager.isStylishTokens || false;
 
         posMap.forEach((tokenGroup) => {
           const count = tokenGroup.length;
@@ -938,6 +930,7 @@
             const { color, token, coords } = item;
             const tokenElem = document.createElement('div');
             tokenElem.className = `token-pin-container token-${color}`;
+            tokenElem.id = `token-${color}-${token.id}`;
             tokenElem.dataset.color = color;
             tokenElem.dataset.id = token.id;
 
@@ -958,10 +951,10 @@
               posY += Math.sin(angle) * offset;
             }
 
-            tokenElem.style.width = `${cellSize * 0.88}px`;
-            tokenElem.style.height = `${cellSize * 0.88}px`;
-            tokenElem.style.left = `${posX + (cellSize * 0.06)}px`;
-            tokenElem.style.top = `${posY + (cellSize * 0.06)}px`;
+            tokenElem.style.width = `${cellSize * 0.90}px`;
+            tokenElem.style.height = `${cellSize * 0.90}px`;
+            tokenElem.style.left = `${posX + (cellSize * 0.05)}px`;
+            tokenElem.style.top = `${posY + (cellSize * 0.05)}px`;
             tokenElem.style.transform = `scale(${scale})`;
 
             const isSelectable = validTokens.some(vt => vt.color === color && vt.id === token.id);
@@ -973,15 +966,13 @@
               });
             }
 
-            const pal = colorPalettes[color];
+            const pieceSrc = isStylish
+              ? `assets/images/${color}piecestylish.png`
+              : `assets/images/${color}piece.png`;
+
             tokenElem.innerHTML = `
-              <svg class="token-pin-svg" viewBox="0 0 40 48">
-                <ellipse cx="20" cy="46" rx="9" ry="2.5" fill="rgba(0,0,0,0.4)" />
-                <path d="M20,2 C10,2 3,9 3,19 C3,28 17,44 20,45 C23,44 37,28 37,19 C37,9 30,2 20,2 Z"
-                      fill="#FFFFFF" stroke="#333333" stroke-width="1.8" />
-                <circle cx="20" cy="19" r="10" fill="${pal.inner}" stroke="${pal.dark}" stroke-width="1.2" />
-                <ellipse cx="17.5" cy="15.5" rx="3.5" ry="2" fill="rgba(255,255,255,0.7)" />
-              </svg>
+              <div class="token-glow-spinner"></div>
+              <img class="token-sprite-img" src="${pieceSrc}" alt="${color}" />
             `;
             tokensOverlay.appendChild(tokenElem);
           });
@@ -989,28 +980,36 @@
       }
 
       /* ============================================================
-         3D DICE & TURN ARROW
+         3D AUTHENTIC DICE ANIMATION & TRAY CONTROLS
+         Cycles dice0001.png - dice0008.png (identical to rjraj111/Ludo_King_Clone)
          ============================================================ */
       function animateDiceRoll(playerColor) {
-        const cube = document.getElementById(`cube-${playerColor}`);
-        if (!cube) return;
-        cube.classList.remove('rolling');
-        void cube.offsetWidth;
-        cube.classList.add('rolling');
+        const diceImg = document.getElementById(`diceimg-${playerColor}`);
+        if (!diceImg) return;
+
+        diceImg.classList.add('rolling');
+        let frame = 1;
+        const rollTimer = setInterval(() => {
+          diceImg.src = `assets/images/dice000${frame}.png`;
+          frame = (frame % 8) + 1;
+        }, 45);
 
         setTimeout(() => {
-          cube.classList.remove('rolling');
+          clearInterval(rollTimer);
+          diceImg.classList.remove('rolling');
+          const finalRoll = window.boardManager.lastDiceRoll || 6;
+          diceImg.src = `assets/images/dice${finalRoll}.png`;
           updateDiceFaces(window.boardManager.exportState());
-        }, 550);
+        }, 500);
       }
 
       function updateDiceFaces(state) {
         ['blue', 'red', 'green', 'yellow'].forEach(color => {
-          const face = document.getElementById(`face-${color}`);
-          if (!face) return;
-          face.innerHTML = '';
-          const roll = (color === state.currentTurn) ? state.lastDiceRoll : 6;
-          drawDiceDots(face, roll || 6);
+          const diceImg = document.getElementById(`diceimg-${color}`);
+          if (diceImg && !diceImg.classList.contains('rolling')) {
+            const roll = (color === state.currentTurn) ? state.lastDiceRoll : 6;
+            diceImg.src = `assets/images/dice${roll || 6}.png`;
+          }
 
           const slot = document.getElementById(`diceslot-${color}`);
           if (slot) {
@@ -1021,24 +1020,6 @@
             }
           }
         });
-      }
-
-      function drawDiceDots(faceElem, number) {
-        const dotPositions = {
-          1: [4],
-          2: [0, 8],
-          3: [0, 4, 8],
-          4: [0, 2, 6, 8],
-          5: [0, 2, 4, 6, 8],
-          6: [0, 2, 3, 5, 6, 8]
-        };
-
-        const activeDots = new Set(dotPositions[number] || [4]);
-        for (let i = 0; i < 9; i++) {
-          const dot = document.createElement('div');
-          dot.className = activeDots.has(i) ? 'dice-dot' : 'dice-empty';
-          faceElem.appendChild(dot);
-        }
       }
 
       function updateTurnBoxes(state) {

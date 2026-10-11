@@ -181,31 +181,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const slotsCard = document.getElementById('modalPlayerSlotsCard');
     if (!slotsCard) return;
 
-    // Available players configuration
-    // 2P: Blue & Red
-    // 3P: Blue, Red, Green
-    // 4P: Blue, Red, Green, Yellow
     const colorConfigs = [
-      { color: 'blue',   defaultName: 'Player 1', icon: 'pin-blue.svg', fill: '#0072CE' },
-      { color: 'red',    defaultName: 'Player 2', icon: 'pin-red.svg', fill: '#E52521' },
-      { color: 'green',  defaultName: 'Player 3', icon: 'pin-green.svg', fill: '#009E49' },
-      { color: 'yellow', defaultName: 'Player 4', icon: 'pin-yellow.svg', fill: '#FFC20E' }
+      { color: 'blue',   defaultName: 'Player 1', fill: '#0072CE' },
+      { color: 'red',    defaultName: 'Player 2', fill: '#E52521' },
+      { color: 'green',  defaultName: 'Player 3', fill: '#009E49' },
+      { color: 'yellow', defaultName: 'Player 4', fill: '#FFC20E' }
     ];
 
     const activeConfigs = colorConfigs.slice(0, Math.min(count, 4));
 
     slotsCard.innerHTML = activeConfigs.map((cfg, idx) => `
       <div class="player-slot-row">
-        <div class="slot-pin-avatar stealth-pin-trigger" data-color="${cfg.color}" title="Tap or hold pin">
-          <svg viewBox="0 0 40 48" width="34" height="34">
-            <ellipse cx="20" cy="46" rx="9" ry="2.5" fill="rgba(0,0,0,0.4)" />
-            <path d="M20,2 C10,2 3,9 3,19 C3,28 17,44 20,45 C23,44 37,28 37,19 C37,9 30,2 20,2 Z"
-                  fill="#FFFFFF" stroke="#222" stroke-width="1.8" />
-            <circle cx="20" cy="19" r="10" fill="${cfg.fill}" />
-          </svg>
+        <div class="slot-pin-avatar stealth-pin-trigger" data-color="${cfg.color}" title="Hold to secretly rig winner" style="cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          <img src="assets/images/${cfg.color}piece.png" alt="${cfg.color}" style="width: 32px; height: 38px; object-fit: contain; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.5));" />
         </div>
         <input type="text" class="slot-name-input" id="inputName-${cfg.color}" value="${cfg.defaultName}" maxlength="12" />
-        <div class="slot-dice-preview">🎲</div>
+        <div class="slot-dice-preview">
+          <img src="assets/images/dice6.png" alt="Dice" style="width: 24px; height: 24px; object-fit: contain;" />
+        </div>
       </div>
     `).join('');
 
@@ -283,6 +276,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function launchGameMode(mode, activePlayers, playerNames, oneTokenOut = false) {
     if (lobbyView) lobbyView.style.display = 'none';
     if (gameView) gameView.classList.add('active');
+
+    if (window.soundEngine) {
+      window.soundEngine.playGameStart();
+      setTimeout(() => {
+        window.soundEngine.startMusic();
+      }, 1200);
+    }
 
     // Update base labels and pill labels with customized player names
     ['blue', 'red', 'green', 'yellow'].forEach(c => {
