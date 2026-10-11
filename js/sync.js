@@ -1,6 +1,7 @@
 /**
- * Real-Time Game Sync Manager (HiveMQ MQTT over WSS + BroadcastChannel fallback)
- * Enables zero-backend remote control from a second smartphone or browser tab.
+ * Real-Time MQTT over WebSockets Sync Engine
+ * Connects the main board and remote controller via broker.hivemq.com:8884/mqtt
+ * Includes instant local fallback (BroadcastChannel + localStorage) for dual tabs.
  */
 class SyncManager {
   constructor(isController = false) {
@@ -9,11 +10,12 @@ class SyncManager {
     this.client = null;
     this.connected = false;
     this.broadcastChannel = null;
+
     this.onStateUpdate = null;
     this.onControlCommand = null;
     this.onConnectionChange = null;
 
-    // Broker configuration
+    // MQTT Configuration
     this.brokerUrl = 'wss://broker.hivemq.com:8884/mqtt';
     this.topicControl = `ludoking/${this.roomId}/control`;
     this.topicState = `ludoking/${this.roomId}/state`;
@@ -22,7 +24,6 @@ class SyncManager {
   }
 
   _resolveRoomId() {
-    // 1. Check URL query parameters: ?room=XYZ
     const params = new URLSearchParams(window.location.search);
     let room = params.get('room');
     if (room) {
@@ -30,22 +31,16 @@ class SyncManager {
       localStorage.setItem('ludo_active_room', room);
       return room;
     }
-
-    // 2. Check hash: #XYZ
     if (window.location.hash && window.location.hash.length > 2) {
       room = window.location.hash.substring(1).toUpperCase().trim();
       localStorage.setItem('ludo_active_room', room);
       return room;
     }
-
-    // 3. Check localStorage
     room = localStorage.getItem('ludo_active_room');
-    if (room && room.length >= 4) {
+    if (room && room.length >= 3) {
       return room;
     }
-
-    // 4. Generate persistent new 6-character room code
-    const generated = 'LK' + Math.floor(1000 + Math.random() * 9000);
+    const generated = 'GAME' + Math.floor(100 + Math.random() * 900);
     localStorage.setItem('ludo_active_room', generated);
     return generated;
   }
@@ -57,11 +52,8 @@ class SyncManager {
     this.topicControl = `ludoking/${this.roomId}/control`;
     this.topicState = `ludoking/${this.roomId}/state`;
 
-    // Reconnect with new topics
     if (this.client) {
-      this.client.end(true, () => {
-        this.connect();
-      });
+      this.client.end(true, () => this.connect());
     }
     this._initLocalChannel();
   }
@@ -71,7 +63,7 @@ class SyncManager {
   }
 
   getControllerUrl() {
-    const base = window.location.origin + window.location.pathname.replace(/index\.html$/, '');
+    const base = window.location.origin + window.location.pathname.replace(/(index|preview)\.html$/, '');
     return `${base}controller.html?room=${this.roomId}`;
   }
 
@@ -84,11 +76,8 @@ class SyncManager {
           this._handleIncomingRaw(event.data);
         };
       }
-    } catch (e) {
-      console.warn('BroadcastChannel not supported, relying on MQTT & localStorage');
-    }
+    } catch (e) {}
 
-    // LocalStorage storage event fallback
     window.addEventListener('storage', (e) => {
       if (e.key === `ludo_event_${this.roomId}` && e.newValue) {
         try {
@@ -100,7 +89,6 @@ class SyncManager {
 
   connect() {
     if (typeof mqtt === 'undefined') {
-      console.warn('MQTT.js library not loaded yet; will retry shortly.');
       setTimeout(() => this.connect(), 1000);
       return;
     }
@@ -113,23 +101,17 @@ class SyncManager {
       connectTimeout: 8000
     };
 
-    console.log(`[Sync] Connecting to MQTT broker for Room ${this.roomId}...`);
-
     try {
       this.client = mqtt.connect(this.brokerUrl, options);
 
       this.client.on('connect', () => {
         this.connected = true;
-        console.log(`[Sync] Connected to MQTT broker! Client ID: ${clientId}`);
         if (this.onConnectionChange) this.onConnectionChange(true);
 
         const subTopic = this.isController ? this.topicState : this.topicControl;
         this.client.subscribe(subTopic, (err) => {
-          if (!err) {
-            console.log(`[Sync] Subscribed to: ${subTopic}`);
-            if (this.isController) {
-              this.sendControlCommand({ action: 'REQUEST_SYNC' });
-            }
+          if (!err && this.isController) {
+            this.sendControlCommand({ action: 'REQUEST_SYNC' });
           }
         });
       });
@@ -138,22 +120,15 @@ class SyncManager {
         try {
           const payload = JSON.parse(message.toString());
           this._handleIncomingRaw(payload);
-        } catch (e) {
-          console.error('[Sync] Error parsing incoming MQTT message', e);
-        }
+        } catch (e) {}
       });
 
       this.client.on('offline', () => {
         this.connected = false;
-        console.log('[Sync] MQTT client offline');
         if (this.onConnectionChange) this.onConnectionChange(false);
       });
-
-      this.client.on('error', (err) => {
-        console.warn('[Sync] MQTT error:', err);
-      });
     } catch (e) {
-      console.error('[Sync] Failed to initialize MQTT client', e);
+      console.warn('[Sync] MQTT initialization warning', e);
     }
   }
 
@@ -167,7 +142,6 @@ class SyncManager {
     }
   }
 
-  // Called by main game to notify controller of state updates
   broadcastState(state) {
     const payload = {
       type: 'STATE',
@@ -175,11 +149,9 @@ class SyncManager {
       timestamp: Date.now(),
       data: state
     };
-
     this._send(this.topicState, payload);
   }
 
-  // Called by controller to send instructions to the game
   sendControlCommand(data) {
     const payload = {
       type: 'CONTROL',
@@ -187,31 +159,24 @@ class SyncManager {
       timestamp: Date.now(),
       data: data
     };
-
     this._send(this.topicControl, payload);
   }
 
   _send(topic, payload) {
     const jsonStr = JSON.stringify(payload);
 
-    // 1. Send via MQTT if connected
     if (this.client && this.connected) {
       this.client.publish(topic, jsonStr, { qos: 0 });
     }
-
-    // 2. Send via local BroadcastChannel (instant zero-latency local fallback)
     if (this.broadcastChannel) {
       try {
         this.broadcastChannel.postMessage(payload);
       } catch (e) {}
     }
-
-    // 3. LocalStorage event fallback
     try {
       localStorage.setItem(`ludo_event_${this.roomId}`, jsonStr);
     } catch (e) {}
   }
 }
 
-// Global instance helper
 window.SyncManager = SyncManager;

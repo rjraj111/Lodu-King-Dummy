@@ -3,18 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Smart Utility</title>
+  <title>Smart Device Controller</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0F172A;
-      --card-bg: #1E293B;
-      --border-color: #334155;
-      --text-main: #F8FAFC;
-      --text-muted: #94A3B8;
-
+      --bg: #090E1A;
+      --card-bg: #131B2E;
+      --card-border: #24304D;
       --color-red: #E52521;
       --color-green: #009E49;
       --color-yellow: #FFC20E;
@@ -31,9 +28,9 @@
     }
 
     body {
-      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg-dark);
-      color: var(--text-main);
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: #FFF;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -62,7 +59,7 @@
       align-items: center;
       padding: 8px 12px;
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--card-border);
       border-radius: 14px;
     }
 
@@ -78,42 +75,39 @@
       border-radius: 50%;
       background: #EF4444;
       box-shadow: 0 0 8px #EF4444;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.3s ease;
     }
 
     .conn-dot.online {
-      background: #22C55E;
-      box-shadow: 0 0 8px #22C55E;
+      background: #00E676;
+      box-shadow: 0 0 8px #00E676;
     }
 
     .room-tag {
       font-family: monospace;
       font-weight: 700;
       font-size: 0.9rem;
-      background: #0F172A;
+      background: #090E1A;
       padding: 4px 8px;
       border-radius: 6px;
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--card-border);
       cursor: pointer;
     }
 
     .disguise-btn {
       background: rgba(255, 255, 255, 0.1);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--card-border);
       color: #FFF;
       padding: 6px 12px;
       border-radius: 10px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
 
-    /* Live Game State Card */
+    /* Live Turn Monitor */
     .live-card {
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--card-border);
       border-radius: 16px;
       padding: 14px;
       display: grid;
@@ -122,8 +116,8 @@
     }
 
     .stat-box {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(9, 14, 26, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 12px;
       padding: 10px;
       display: flex;
@@ -132,8 +126,8 @@
     }
 
     .stat-label {
-      font-size: 0.72rem;
-      color: var(--text-muted);
+      font-size: 0.7rem;
+      color: #94A3B8;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -149,7 +143,7 @@
     /* Section Cards */
     .control-card {
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--card-border);
       border-radius: 16px;
       padding: 14px;
       display: flex;
@@ -158,10 +152,10 @@
     }
 
     .section-title {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--text-muted);
+      letter-spacing: 0.7px;
+      color: #94A3B8;
       font-weight: 600;
       display: flex;
       justify-content: space-between;
@@ -180,7 +174,7 @@
       border-radius: 12px;
       border: 2px solid transparent;
       font-weight: 700;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       cursor: pointer;
       color: #FFF;
       display: flex;
@@ -188,13 +182,9 @@
       justify-content: center;
       gap: 8px;
       transition: transform 0.1s ease, filter 0.15s ease, border-color 0.15s ease;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
     }
 
-    .winner-btn:active {
-      transform: scale(0.96);
-    }
-
+    .winner-btn:active { transform: scale(0.96); }
     .btn-red    { background: var(--color-red); }
     .btn-green  { background: var(--color-green); }
     .btn-yellow { background: var(--color-yellow); color: #000; }
@@ -207,7 +197,7 @@
       transform: scale(1.02);
     }
 
-    /* Dice Override Grid */
+    /* Override Buttons [1..6] */
     .dice-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -215,8 +205,8 @@
     }
 
     .force-dice-btn {
-      background: #0F172A;
-      border: 1.5px solid var(--border-color);
+      background: #090E1A;
+      border: 1.5px solid var(--card-border);
       color: #FFF;
       padding: 14px 0;
       border-radius: 12px;
@@ -224,11 +214,9 @@
       font-size: 1.5rem;
       cursor: pointer;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       transition: all 0.15s ease;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
 
     .force-dice-btn:active {
@@ -243,7 +231,7 @@
       color: var(--gold);
     }
 
-    /* Auto Kill Button */
+    /* Auto Capture Button */
     .sniper-btn {
       background: linear-gradient(135deg, #7C3AED 0%, #C026D3 100%);
       border: 1.5px solid rgba(255, 255, 255, 0.2);
@@ -258,19 +246,10 @@
       justify-content: center;
       gap: 10px;
       box-shadow: 0 6px 16px rgba(192, 38, 211, 0.4);
-      transition: transform 0.15s ease;
     }
 
-    .sniper-btn:active {
-      transform: scale(0.97);
-    }
+    .sniper-btn:active { transform: scale(0.97); }
 
-    .sniper-btn.active-kill {
-      background: linear-gradient(135deg, #DC2626 0%, #EA580C 100%);
-      box-shadow: 0 0 20px rgba(220, 38, 38, 0.7);
-    }
-
-    /* Toast Notification */
     .toast-msg {
       position: fixed;
       bottom: 20px;
@@ -284,7 +263,7 @@
       font-size: 0.85rem;
       font-weight: 600;
       opacity: 0;
-      transition: transform 0.25s ease, opacity 0.25s ease;
+      transition: all 0.25s ease;
       pointer-events: none;
       z-index: 100;
     }
@@ -294,13 +273,10 @@
       opacity: 1;
     }
 
-    /* ============================================================
-       DISGUISED CALCULATOR APP
-       ============================================================ */
+    /* Calculator Disguise */
     .calc-screen {
-      background: transparent;
       color: #FFF;
-      font-size: 3.8rem;
+      font-size: 3.6rem;
       text-align: right;
       padding: 10px 14px;
       font-weight: 300;
@@ -319,56 +295,34 @@
       aspect-ratio: 1 / 1;
       border-radius: 50%;
       border: none;
-      font-size: 1.8rem;
+      font-size: 1.7rem;
       font-weight: 500;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       color: #FFF;
-      background: #333333;
-      transition: filter 0.1s ease;
+      background: #333;
     }
 
-    .calc-btn:active {
-      filter: brightness(1.3);
-    }
-
-    .calc-btn.btn-fn {
-      background: #A5A5A5;
-      color: #000;
-    }
-
-    .calc-btn.btn-op {
-      background: #FF9F0A;
-      color: #FFF;
-    }
-
-    .calc-btn.btn-zero {
-      grid-column: 1 / 3;
-      aspect-ratio: auto;
-      border-radius: 40px;
-      justify-content: flex-start;
-      padding-left: 28px;
-    }
+    .calc-btn.btn-fn { background: #A5A5A5; color: #000; }
+    .calc-btn.btn-op { background: #FF9F0A; }
+    .calc-btn.btn-zero { grid-column: 1 / 3; aspect-ratio: auto; border-radius: 40px; justify-content: flex-start; padding-left: 28px; }
   </style>
 </head>
 <body>
 
   <!-- MAIN CONTROLLER VIEW -->
   <main class="controller-view" id="controllerView">
-    <!-- Header -->
     <header class="header-bar">
       <div class="status-group">
-        <div class="conn-dot" id="connDot" title="Connection status"></div>
-        <span class="room-tag" id="roomCodeDisplay" title="Click to change room">ROOM: LK1001</span>
+        <div class="conn-dot" id="connDot"></div>
+        <span class="room-tag" id="roomCodeDisplay">ROOM: GAME123</span>
       </div>
-      <button class="disguise-btn" id="disguiseBtn">
-        <span>🧮</span> Disguise
-      </button>
+      <button class="disguise-btn" id="disguiseBtn">🧮 Disguise</button>
     </header>
 
-    <!-- Live Status Monitor -->
+    <!-- Live Turn Status -->
     <div class="live-card">
       <div class="stat-box">
         <span class="stat-label">Active Turn</span>
@@ -379,16 +333,16 @@
         <span class="stat-value" id="rollDisplay">--</span>
       </div>
       <div class="stat-box" style="grid-column: 1 / -1;">
-        <span class="stat-label">Guaranteed Favored Winner</span>
+        <span class="stat-label">Guaranteed Winner Status</span>
         <span class="stat-value" id="favoredDisplay" style="color: var(--gold);">FAIR MODE</span>
       </div>
     </div>
 
-    <!-- Favored Winner Selector -->
+    <!-- Set Guaranteed Winner -->
     <section class="control-card">
       <div class="section-title">
-        <span>Set Guaranteed Winner</span>
-        <span style="font-size: 0.72rem; color: #22C55E;">Stealth Auto-Bias</span>
+        <span>Guaranteed Winner Switch</span>
+        <span style="font-size: 0.7rem; color: #00E676;">Stealth RNG</span>
       </div>
       <div class="winner-grid">
         <button class="winner-btn btn-red" data-winner="red">🔴 RED</button>
@@ -399,11 +353,11 @@
       </div>
     </section>
 
-    <!-- Instant Dice Override -->
+    <!-- Next Roll Override [1, 2, 3, 4, 5, 6] -->
     <section class="control-card">
       <div class="section-title">
-        <span>Force Next Dice Roll</span>
-        <span id="forceStatus" style="font-size: 0.72rem; color: var(--gold);">Instant</span>
+        <span>Instant Dice Roll Override</span>
+        <span style="font-size: 0.7rem; color: var(--gold);">Forces Next Turn</span>
       </div>
       <div class="dice-grid">
         <button class="force-dice-btn" data-val="1">1</button>
@@ -415,19 +369,19 @@
       </div>
     </section>
 
-    <!-- Auto-Kill Sniper Trigger -->
+    <!-- Auto Capture Trigger -->
     <section class="control-card">
-      <button class="sniper-btn" id="autoKillBtn">
-        <span>🎯</span> FORCE AUTO-KILL DISTANCE
+      <button class="sniper-btn" id="autoCaptureBtn">
+        <span>🎯</span> AUTO CAPTURE (FORCE KILL)
       </button>
     </section>
   </main>
 
-  <!-- DISGUISED CALCULATOR VIEW -->
+  <!-- CALCULATOR DISGUISE VIEW -->
   <div class="calculator-view" id="calculatorView">
-    <div class="calc-screen" id="calcDisplay" title="Tap 3 times to exit disguise">0</div>
+    <div class="calc-screen" id="calcDisplay" title="Triple tap to exit">0</div>
     <div class="calc-grid">
-      <button class="calc-btn btn-fn" id="calcAcBtn">AC</button>
+      <button class="calc-btn btn-fn">AC</button>
       <button class="calc-btn btn-fn">+/-</button>
       <button class="calc-btn btn-fn">%</button>
       <button class="calc-btn btn-op">÷</button>
@@ -455,7 +409,6 @@
 
   <div class="toast-msg" id="toastMsg">Command Sent</div>
 
-  <!-- MQTT library for WebSockets -->
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
   <script src="js/sync.js"></script>
 
@@ -467,62 +420,50 @@
       const turnDisplay = document.getElementById('turnDisplay');
       const rollDisplay = document.getElementById('rollDisplay');
       const favoredDisplay = document.getElementById('favoredDisplay');
-      const forceStatus = document.getElementById('forceStatus');
-      const autoKillBtn = document.getElementById('autoKillBtn');
+      const autoCaptureBtn = document.getElementById('autoCaptureBtn');
       const toastMsg = document.getElementById('toastMsg');
 
       const controllerView = document.getElementById('controllerView');
       const calculatorView = document.getElementById('calculatorView');
       const disguiseBtn = document.getElementById('disguiseBtn');
       const calcDisplay = document.getElementById('calcDisplay');
-      const calcAcBtn = document.getElementById('calcAcBtn');
 
       roomCodeDisplay.textContent = `ROOM: ${syncManager.getRoomId()}`;
 
-      // Change Room code on tap
       roomCodeDisplay.addEventListener('click', () => {
-        const input = prompt('Enter Room Code (e.g. LK1234):', syncManager.getRoomId());
+        const input = prompt('Enter Room ID (e.g. game123):', syncManager.getRoomId());
         if (input) {
           syncManager.setRoomId(input.trim());
           roomCodeDisplay.textContent = `ROOM: ${syncManager.getRoomId()}`;
         }
       });
 
-      // Connect
       syncManager.onConnectionChange = (online) => {
-        if (online) {
-          connDot.classList.add('online');
-        } else {
-          connDot.classList.remove('online');
-        }
+        if (online) connDot.classList.add('online');
+        else connDot.classList.remove('online');
       };
 
       syncManager.connect();
 
-      // State update from main game board
       syncManager.onStateUpdate = (state) => {
         if (!state) return;
         connDot.classList.add('online');
 
-        // Turn indicator
         const turnColor = state.currentTurn;
         const colorEmojis = { red: '🔴', green: '🟢', yellow: '🟡', blue: '🔵' };
         turnDisplay.textContent = `${colorEmojis[turnColor] || ''} ${turnColor.toUpperCase()}`;
 
-        // Roll indicator
         rollDisplay.textContent = state.lastDiceRoll ? `🎲 ${state.lastDiceRoll}` : '--';
 
-        // Favored indicator
         const favored = state.favoredPlayer;
         if (favored) {
           favoredDisplay.textContent = `${colorEmojis[favored] || ''} ${favored.toUpperCase()} (BIASED)`;
           favoredDisplay.style.color = 'var(--gold)';
         } else {
           favoredDisplay.textContent = '⚪ FAIR MODE';
-          favoredDisplay.style.color = '#CBD5E1';
+          favoredDisplay.style.color = '#94A3B8';
         }
 
-        // Highlight selected winner button
         document.querySelectorAll('.winner-btn').forEach(btn => {
           const val = btn.dataset.winner;
           if ((!favored && val === 'fair') || (favored === val)) {
@@ -533,27 +474,27 @@
         });
       };
 
-      // Winner Selection
+      // Winner switch
       document.querySelectorAll('.winner-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           vibrate();
           const target = btn.dataset.winner;
           const favored = target === 'fair' ? null : target;
           syncManager.sendControlCommand({ action: 'SET_WINNER', player: favored });
-          showToast(`Favored Winner: ${target.toUpperCase()}`);
+          showToast(`Winner: ${target.toUpperCase()}`);
 
           document.querySelectorAll('.winner-btn').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
         });
       });
 
-      // Force Dice Roll Buttons
+      // Override [1..6]
       document.querySelectorAll('.force-dice-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           vibrate();
           const val = parseInt(btn.dataset.val, 10);
           syncManager.sendControlCommand({ action: 'FORCE_DICE', value: val });
-          showToast(`Queued Next Roll: ${val}`);
+          showToast(`Forced Roll: ${val}`);
 
           document.querySelectorAll('.force-dice-btn').forEach(b => b.classList.remove('active-forced'));
           btn.classList.add('active-forced');
@@ -561,13 +502,11 @@
         });
       });
 
-      // Auto-Kill Trigger
-      autoKillBtn.addEventListener('click', () => {
+      // Auto Capture
+      autoCaptureBtn.addEventListener('click', () => {
         vibrate();
-        syncManager.sendControlCommand({ action: 'AUTO_KILL' });
-        showToast('🎯 Auto-Kill Locked for Next Roll!');
-        autoKillBtn.classList.add('active-kill');
-        setTimeout(() => autoKillBtn.classList.remove('active-kill'), 2000);
+        syncManager.sendControlCommand({ action: 'AUTO_CAPTURE' });
+        showToast('🎯 Auto-Capture Armed!');
       });
 
       function vibrate() {
@@ -580,82 +519,70 @@
         setTimeout(() => toastMsg.classList.remove('show'), 1600);
       }
 
-      /* ============================================================
-         DISGUISED CALCULATOR LOGIC
-         ============================================================ */
+      // Disguise Calculator
       disguiseBtn.addEventListener('click', () => {
         controllerView.style.display = 'none';
         calculatorView.style.display = 'flex';
       });
 
-      // Secret exit: Tap calculator display 3 times quickly
-      let screenTapCount = 0;
-      let lastScreenTapTime = 0;
+      let tapCount = 0;
+      let lastTap = 0;
       calcDisplay.addEventListener('click', () => {
         const now = Date.now();
-        if (now - lastScreenTapTime < 800) {
-          screenTapCount++;
-        } else {
-          screenTapCount = 1;
-        }
-        lastScreenTapTime = now;
-
-        if (screenTapCount >= 3) {
+        if (now - lastTap < 800) tapCount++;
+        else tapCount = 1;
+        lastTap = now;
+        if (tapCount >= 3) {
           calculatorView.style.display = 'none';
           controllerView.style.display = 'flex';
-          screenTapCount = 0;
+          tapCount = 0;
         }
       });
 
-      // Real working calculator engine
+      // Calculator arithmetic
       let currentInput = '0';
       let prevInput = null;
       let operator = null;
-      let resetOnNextDigit = false;
+      let resetOnNext = false;
 
-      function updateCalcScreen() {
-        calcDisplay.textContent = currentInput;
-      }
-
-      document.querySelectorAll('.calc-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const text = btn.textContent.trim();
-
-          if (!isNaN(text) || text === '.') {
-            if (resetOnNextDigit || currentInput === '0') {
-              currentInput = (text === '.') ? '0.' : text;
-              resetOnNextDigit = false;
+      document.querySelectorAll('.calc-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          const t = b.textContent.trim();
+          if (!isNaN(t) || t === '.') {
+            if (resetOnNext || currentInput === '0') {
+              currentInput = t === '.' ? '0.' : t;
+              resetOnNext = false;
             } else {
-              if (text === '.' && currentInput.includes('.')) return;
-              if (currentInput.length < 10) currentInput += text;
+              if (t === '.' && currentInput.includes('.')) return;
+              if (currentInput.length < 10) currentInput += t;
             }
-          } else if (text === 'AC') {
+          } else if (t === 'AC') {
             currentInput = '0';
             prevInput = null;
             operator = null;
-          } else if (text === '+/-') {
+          } else if (t === '+/-') {
             currentInput = (parseFloat(currentInput) * -1).toString();
-          } else if (text === '%') {
+          } else if (t === '%') {
             currentInput = (parseFloat(currentInput) / 100).toString();
-          } else if (['+', '-', '×', '÷'].includes(text)) {
+          } else if (['+', '-', '×', '÷'].includes(t)) {
             prevInput = parseFloat(currentInput);
-            operator = text;
-            resetOnNextDigit = true;
-          } else if (text === '=') {
+            operator = t;
+            resetOnNext = true;
+          } else if (t === '=') {
             if (operator && prevInput !== null) {
-              const current = parseFloat(currentInput);
+              const cur = parseFloat(currentInput);
               let res = 0;
-              if (operator === '+') res = prevInput + current;
-              if (operator === '-') res = prevInput - current;
-              if (operator === '×') res = prevInput * current;
-              if (operator === '÷') res = current !== 0 ? prevInput / current : 0;
+              if (operator === '+') res = prevInput + cur;
+              if (operator === '-') res = prevInput - cur;
+              if (operator === '×') res = prevInput * cur;
+              if (operator === '÷') res = cur !== 0 ? prevInput / cur : 0;
               currentInput = (Math.round(res * 1000000) / 1000000).toString();
               operator = null;
               prevInput = null;
-              resetOnNextDigit = true;
+              resetOnNext = true;
             }
           }
-          updateCalcScreen();
+          calcDisplay.textContent = currentInput;
         });
       });
     });
