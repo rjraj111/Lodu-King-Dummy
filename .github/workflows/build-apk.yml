@@ -32,8 +32,12 @@ jobs:
 
       - name: Install Bubblewrap CLI
         run: |
-          sudo npm install -g @bubblewrap/cli
-          bubblewrap --version
+          mkdir -p "$HOME/.local/bin"
+          npm install -g @bubblewrap/cli --prefix "$HOME/.local" || npm install @bubblewrap/cli
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
+          export PATH="$HOME/.local/bin:$PWD/node_modules/.bin:$PATH"
+          bubblewrap --version || npx bubblewrap --version
 
       - name: Configure Bubblewrap Environment
         run: |
