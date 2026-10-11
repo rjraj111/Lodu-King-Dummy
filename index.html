@@ -466,7 +466,9 @@
       function triggerCrownFlash() {
         const crown = document.getElementById('crownIcon');
         crown.classList.add('crown-flash');
-        if (navigator.vibrate) {
+        if (window.AndroidNative && window.AndroidNative.triggerHaptic) {
+          window.AndroidNative.triggerHaptic(35);
+        } else if (navigator.vibrate) {
           navigator.vibrate(30);
         }
         setTimeout(() => {

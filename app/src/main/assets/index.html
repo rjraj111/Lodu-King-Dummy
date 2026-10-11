@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ludo King — Classic Board Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="game-container">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="room-badge" id="roomBadgeBtn" title="Click to view Remote Controller link/QR">
+        <span class="dot"></span>
+        <span id="roomCodeText">ROOM: LK1001</span>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn" id="audioToggleBtn" title="Toggle Sound">🔊</button>
+        <button class="icon-btn" id="remoteLinkBtn" title="Mobile Remote Controller">📱</button>
+        <button class="icon-btn" id="restartGameBtn" title="Restart Game">🔄</button>
+      </div>
+    </header>
+
+    <!-- Main Ludo Board Frame -->
+    <div class="board-wrapper">
+      <div class="board-inner-frame" id="boardGrid">
+        <!-- 15x15 Grid cells, Yards, and Center Goal will be populated dynamically -->
+      </div>
+      <!-- Overlay for 3D animated tokens -->
+      <div class="tokens-overlay" id="tokensOverlay"></div>
+    </div>
+
+    <!-- 4 Player HUDs -->
+    <div class="players-hud-grid">
+      <!-- Player 1: Red (Bottom-Left) -->
+      <div class="player-hud hud-red active" id="hud-red">
+        <div class="avatar-timer-wrapper">
+          <svg class="timer-svg" viewBox="0 0 44 44">
+            <circle class="timer-bg-circle" cx="22" cy="22" r="18" />
+            <circle class="timer-progress-circle" id="timer-red" cx="22" cy="22" r="18" />
+          </svg>
+          <div class="player-avatar" style="background-color: var(--color-red);">👑</div>
+        </div>
+        <div class="player-details">
+          <span class="player-name">Player (Red)</span>
+          <span class="player-tag">Human</span>
+        </div>
+        <div class="dice-container clickable" id="dice-red" data-color="red">
+          <div class="dice-cube" id="cube-red">
+            <div class="dice-face" id="face-red"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player 2: Green (Top-Left) -->
+      <div class="player-hud hud-green" id="hud-green">
+        <div class="avatar-timer-wrapper">
+          <svg class="timer-svg" viewBox="0 0 44 44">
+            <circle class="timer-bg-circle" cx="22" cy="22" r="18" />
+            <circle class="timer-progress-circle" id="timer-green" cx="22" cy="22" r="18" />
+          </svg>
+          <div class="player-avatar" style="background-color: var(--color-green);">🤖</div>
+        </div>
+        <div class="player-details">
+          <span class="player-name">Bot Green</span>
+          <span class="player-tag">AI</span>
+        </div>
+        <div class="dice-container" id="dice-green" data-color="green">
+          <div class="dice-cube" id="cube-green">
+            <div class="dice-face" id="face-green"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player 3: Yellow (Top-Right) -->
+      <div class="player-hud hud-yellow" id="hud-yellow">
+        <div class="avatar-timer-wrapper">
+          <svg class="timer-svg" viewBox="0 0 44 44">
+            <circle class="timer-bg-circle" cx="22" cy="22" r="18" />
+            <circle class="timer-progress-circle" id="timer-yellow" cx="22" cy="22" r="18" />
+          </svg>
+          <div class="player-avatar" style="background-color: var(--color-yellow);">🤖</div>
+        </div>
+        <div class="player-details">
+          <span class="player-name">Bot Yellow</span>
+          <span class="player-tag">AI</span>
+        </div>
+        <div class="dice-container" id="dice-yellow" data-color="yellow">
+          <div class="dice-cube" id="cube-yellow">
+            <div class="dice-face" id="face-yellow"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player 4: Blue (Bottom-Right) -->
+      <div class="player-hud hud-blue" id="hud-blue">
+        <div class="avatar-timer-wrapper">
+          <svg class="timer-svg" viewBox="0 0 44 44">
+            <circle class="timer-bg-circle" cx="22" cy="22" r="18" />
+            <circle class="timer-progress-circle" id="timer-blue" cx="22" cy="22" r="18" />
+          </svg>
+          <div class="player-avatar" style="background-color: var(--color-blue);">🤖</div>
+        </div>
+        <div class="player-details">
+          <span class="player-name">Bot Blue</span>
+          <span class="player-tag">AI</span>
+        </div>
+        <div class="dice-container" id="dice-blue" data-color="blue">
+          <div class="dice-cube" id="cube-blue">
+            <div class="dice-face" id="face-blue"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Victory Celebration Modal -->
+  <div class="modal-overlay" id="victoryModal">
+    <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
+    <div class="victory-card">
+      <svg class="victory-crown" viewBox="0 0 64 64">
+        <path d="M6 50h52v6H6zm6-6l-4-26 14 10 10-18 10 18 14-10-4 26z" fill="#FFD700" stroke="#FFF" stroke-width="2"/>
+        <circle cx="8" cy="18" r="4" fill="#FF5252"/>
+        <circle cx="32" cy="10" r="5" fill="#40C4FF"/>
+        <circle cx="56" cy="18" r="4" fill="#FF5252"/>
+      </svg>
+      <h2 class="victory-title" id="winnerTitle">WINNER!</h2>
+      <p class="victory-subtitle" id="winnerSubtitle">Red Player conquered the board!</p>
+      <button class="btn-primary" id="playAgainBtn">PLAY AGAIN</button>
+    </div>
+  </div>
+
+  <!-- Remote Controller Info & QR Code Modal -->
+  <div class="modal-overlay" id="qrModal">
+    <div class="qr-modal-card">
+      <h3 style="font-family: var(--font-game); font-size: 1.3rem; margin-bottom: 6px;">📱 Remote Smartphone Controller</h3>
+      <p style="font-size: 0.85rem; color: #CBD5E1; margin-bottom: 12px;">
+        Open this controller on a second smartphone or browser tab to override dice and choose winners in real-time!
+      </p>
+      <div class="qr-code-box" id="qrCodeContainer">
+        <img id="qrCodeImage" alt="Controller QR Code" width="160" height="160" />
+      </div>
+      <div style="margin: 10px 0; font-family: monospace; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px; font-size: 0.82rem; word-break: break-all;" id="controllerUrlText">
+        controller.html
+      </div>
+      <div style="display: flex; gap: 8px; justify-content: center;">
+        <button class="btn-primary" style="padding: 8px 18px; font-size: 0.9rem;" id="copyLinkBtn">Copy Link</button>
+        <button class="btn-primary" style="padding: 8px 18px; font-size: 0.9rem; background: #4A5568;" id="closeQrModalBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- External MQTT library for WebSockets HiveMQ -->
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+  <!-- Game Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/diceEngine.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/engine.js"></script>
+
+  <script>
+    /* ============================================================
+       MAIN UI CONTROLLER & BOARD GENERATION
+       ============================================================ */
+    document.addEventListener('DOMContentLoaded', () => {
+      const boardGrid = document.getElementById('boardGrid');
+      const tokensOverlay = document.getElementById('tokensOverlay');
+      const roomBadgeBtn = document.getElementById('roomBadgeBtn');
+      const roomCodeText = document.getElementById('roomCodeText');
+      const audioToggleBtn = document.getElementById('audioToggleBtn');
+      const remoteLinkBtn = document.getElementById('remoteLinkBtn');
+      const restartGameBtn = document.getElementById('restartGameBtn');
+      const victoryModal = document.getElementById('victoryModal');
+      const playAgainBtn = document.getElementById('playAgainBtn');
+      const qrModal = document.getElementById('qrModal');
+      const closeQrModalBtn = document.getElementById('closeQrModalBtn');
+      const copyLinkBtn = document.getElementById('copyLinkBtn');
+      const qrCodeImage = document.getElementById('qrCodeImage');
+      const controllerUrlText = document.getElementById('controllerUrlText');
+
+      // Initialize Sync Manager
+      const syncManager = new SyncManager(false);
+      roomCodeText.textContent = `ROOM: ${syncManager.getRoomId()}`;
+      syncManager.connect();
+
+      // Remote command handler
+      syncManager.onControlCommand = (data) => {
+        if (!data || !data.action) return;
+        console.log('[MainGame] Received remote command:', data);
+
+        if (data.action === 'SET_WINNER') {
+          window.diceEngine.setFavoredPlayer(data.player);
+          triggerCrownFlash();
+        } else if (data.action === 'FORCE_DICE') {
+          window.diceEngine.queueOverride(data.value);
+        } else if (data.action === 'AUTO_KILL') {
+          window.diceEngine.triggerAutoKill();
+        } else if (data.action === 'REQUEST_SYNC') {
+          syncManager.broadcastState(window.ludoEngine.exportState());
+        }
+      };
+
+      // Generate the Board
+      buildBoardDOM();
+
+      // Stealth Tap Matrix tracking
+      setupStealthTapMatrix();
+
+      // Connect Engine Callbacks
+      window.ludoEngine.onStateChange = (state) => {
+        updateHUDs(state);
+        renderTokens(state);
+        syncManager.broadcastState(state);
+      };
+
+      window.ludoEngine.onDiceRollAnim = (playerColor) => {
+        animateDiceRoll(playerColor);
+      };
+
+      window.ludoEngine.onTokenMoveStep = async (token) => {
+        renderTokens(window.ludoEngine.exportState());
+      };
+
+      window.ludoEngine.onWinnerDeclared = (playerColor) => {
+        showVictoryScreen(playerColor);
+      };
+
+      window.ludoEngine.onTimerTick = (remaining, total) => {
+        updateTimerCircle(remaining, total);
+      };
+
+      // Button Listeners
+      audioToggleBtn.addEventListener('click', () => {
+        const muted = window.soundEngine.toggleMute();
+        audioToggleBtn.textContent = muted ? '🔇' : '🔊';
+      });
+
+      remoteLinkBtn.addEventListener('click', showQrModal);
+      roomBadgeBtn.addEventListener('click', showQrModal);
+      closeQrModalBtn.addEventListener('click', () => qrModal.classList.remove('open'));
+
+      copyLinkBtn.addEventListener('click', () => {
+        const url = syncManager.getControllerUrl();
+        navigator.clipboard?.writeText(url).then(() => {
+          copyLinkBtn.textContent = 'Copied!';
+          setTimeout(() => copyLinkBtn.textContent = 'Copy Link', 2000);
+        });
+      });
+
+      restartGameBtn.addEventListener('click', () => {
+        if (confirm('Start a new game?')) {
+          window.ludoEngine.startNewGame();
+        }
+      });
+
+      playAgainBtn.addEventListener('click', () => {
+        victoryModal.classList.remove('open');
+        window.ludoEngine.startNewGame();
+      });
+
+      // Dice Click Handlers
+      ['red', 'green', 'yellow', 'blue'].forEach(color => {
+        const diceElem = document.getElementById(`dice-${color}`);
+        diceElem.addEventListener('click', () => {
+          if (window.ludoEngine.getCurrentPlayer() === color &&
+              window.ludoEngine.turnState === 'WAITING_FOR_ROLL' &&
+              !window.ludoEngine.players[color].isAI) {
+            window.ludoEngine.rollDice();
+          }
+        });
+      });
+
+      // Start Game
+      window.ludoEngine.startNewGame();
+
+      function showQrModal() {
+        const controllerUrl = syncManager.getControllerUrl();
+        controllerUrlText.textContent = controllerUrl;
+        // Use free quick QR code API
+        qrCodeImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(controllerUrl)}`;
+        qrModal.classList.add('open');
+      }
+
+      /* ============================================================
+         BUILD 15x15 LUDO BOARD DOM
+         ============================================================ */
+      function buildBoardDOM() {
+        boardGrid.innerHTML = '';
+
+        // 1. Base Yards
+        const yards = [
+          { color: 'green',  col: '1 / 7', row: '1 / 7' },
+          { color: 'yellow', col: '10 / 16', row: '1 / 7' },
+          { color: 'red',    col: '1 / 7', row: '10 / 16' },
+          { color: 'blue',   col: '10 / 16', row: '10 / 16' }
+        ];
+
+        yards.forEach(y => {
+          const yardDiv = document.createElement('div');
+          yardDiv.className = `yard yard-${y.color}`;
+          yardDiv.style.gridColumn = y.col;
+          yardDiv.style.gridRow = y.row;
+
+          const innerBox = document.createElement('div');
+          innerBox.className = 'yard-inner';
+
+          for (let i = 0; i < 4; i++) {
+            const slot = document.createElement('div');
+            slot.className = 'token-slot';
+            slot.id = `slot-${y.color}-${i}`;
+            innerBox.appendChild(slot);
+          }
+          yardDiv.appendChild(innerBox);
+          boardGrid.appendChild(yardDiv);
+        });
+
+        // 2. Center Finish Goal (col: 7/10, row: 7/10)
+        const centerGoal = document.createElement('div');
+        centerGoal.className = 'center-goal';
+
+        // 4 Color SVG Triangles
+        centerGoal.innerHTML = `
+          <svg class="center-triangles-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <!-- Top Green Triangle -->
+            <polygon points="0,0 100,0 50,50" fill="var(--color-green)" />
+            <!-- Right Yellow Triangle -->
+            <polygon points="100,0 100,100 50,50" fill="var(--color-yellow)" />
+            <!-- Bottom Blue Triangle -->
+            <polygon points="100,100 0,100 50,50" fill="var(--color-blue)" />
+            <!-- Left Red Triangle -->
+            <polygon points="0,100 0,0 50,50" fill="var(--color-red)" />
+          </svg>
+          <!-- Center Logo & Stealth Tap Matrix -->
+          <div class="center-logo-container" id="centerLogoContainer">
+            <svg class="crown-icon" id="crownIcon" viewBox="0 0 64 64">
+              <path d="M6 50h52v6H6zm6-6l-4-26 14 10 10-18 10 18 14-10-4 26z" fill="#FFD700" stroke="#FFFFFF" stroke-width="1.8"/>
+              <circle cx="8" cy="18" r="3.5" fill="#FF4444"/>
+              <circle cx="32" cy="10" r="4.5" fill="#44AAFF"/>
+              <circle cx="56" cy="18" r="3.5" fill="#FF4444"/>
+            </svg>
+            <span class="logo-text">LUDO<br>KING</span>
+          </div>
+        `;
+        boardGrid.appendChild(centerGoal);
+
+        // 3. 15x15 Track Cells
+        for (let r = 0; r < 15; r++) {
+          for (let c = 0; c < 15; c++) {
+            // Skip Base Yards & Center Goal
+            const inGreenBase = (r < 6 && c < 6);
+            const inYellowBase = (r < 6 && c >= 9);
+            const inRedBase = (r >= 9 && c < 6);
+            const inBlueBase = (r >= 9 && c >= 9);
+            const inCenter = (r >= 6 && r <= 8 && c >= 6 && c <= 8);
+
+            if (inGreenBase || inYellowBase || inRedBase || inBlueBase || inCenter) {
+              continue;
+            }
+
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.style.gridColumn = `${c + 1}`;
+            cell.style.gridRow = `${r + 1}`;
+            cell.id = `cell-${c}-${r}`;
+
+            // Check if Home Run Corridor
+            if (r === 7 && c >= 1 && c <= 5) cell.classList.add('cell-red');
+            if (c === 7 && r >= 1 && r <= 5) cell.classList.add('cell-green');
+            if (r === 7 && c >= 9 && c <= 13) cell.classList.add('cell-yellow');
+            if (c === 7 && r >= 9 && r <= 13) cell.classList.add('cell-blue');
+
+            // Check if Start Safe Tiles
+            if (c === 1 && r === 6) {
+              cell.classList.add('cell-red');
+              addStarIcon(cell);
+            } else if (c === 8 && r === 1) {
+              cell.classList.add('cell-green');
+              addStarIcon(cell);
+            } else if (c === 13 && r === 8) {
+              cell.classList.add('cell-yellow');
+              addStarIcon(cell);
+            } else if (c === 6 && r === 13) {
+              cell.classList.add('cell-blue');
+              addStarIcon(cell);
+            }
+
+            // Milestone Safe Star Tiles
+            if ((c === 6 && r === 2) || (c === 12 && r === 6) || (c === 8 && r === 12) || (c === 2 && r === 8)) {
+              addStarIcon(cell);
+            }
+
+            boardGrid.appendChild(cell);
+          }
+        }
+      }
+
+      function addStarIcon(cellElem) {
+        const star = document.createElement('div');
+        star.className = 'star-icon';
+        star.innerHTML = `
+          <svg viewBox="0 0 24 24">
+            <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+          </svg>
+        `;
+        cellElem.appendChild(star);
+      }
+
+      /* ============================================================
+         STEALTH TAP MATRIX TRIGGER ON CENTER LOGO
+         ============================================================ */
+      function setupStealthTapMatrix() {
+        const centerLogo = document.getElementById('centerLogoContainer');
+        let centerTapCount = 0;
+        let lastCenterTapTime = 0;
+
+        centerLogo.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          const rect = centerLogo.getBoundingClientRect();
+          const clickX = e.clientX - rect.left;
+          const clickY = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+
+          const dx = clickX - centerX;
+          const dy = clickY - centerY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const now = Date.now();
+
+          // 1. Center Triple-Tap for Fair Reset
+          if (dist < rect.width * 0.28) {
+            if (now - lastCenterTapTime < 1100) {
+              centerTapCount++;
+            } else {
+              centerTapCount = 1;
+            }
+            lastCenterTapTime = now;
+
+            if (centerTapCount >= 3) {
+              window.diceEngine.setFavoredPlayer(null);
+              triggerCrownFlash();
+              centerTapCount = 0;
+            }
+            return;
+          }
+
+          // 2. Quadrant Directional Tap:
+          // Top: Green, Right: Yellow, Bottom: Blue, Left: Red
+          let selectedPlayer = null;
+          if (Math.abs(dy) > Math.abs(dx)) {
+            selectedPlayer = dy < 0 ? 'green' : 'blue';
+          } else {
+            selectedPlayer = dx > 0 ? 'yellow' : 'red';
+          }
+
+          window.diceEngine.setFavoredPlayer(selectedPlayer);
+          triggerCrownFlash();
+        });
+      }
+
+      function triggerCrownFlash() {
+        const crown = document.getElementById('crownIcon');
+        crown.classList.add('crown-flash');
+        if (window.AndroidNative && window.AndroidNative.triggerHaptic) {
+          window.AndroidNative.triggerHaptic(35);
+        } else if (navigator.vibrate) {
+          navigator.vibrate(30);
+        }
+        setTimeout(() => {
+          crown.classList.remove('crown-flash');
+        }, 110);
+      }
+
+      /* ============================================================
+         TOKEN RENDERING & DYNAMIC CLUSTERING
+         ============================================================ */
+      function renderTokens(state) {
+        tokensOverlay.innerHTML = '';
+        const rect = boardGrid.getBoundingClientRect();
+        const cellSize = rect.width / 15;
+
+        // Group tokens by their rendered coordinate to cluster overlapping tokens
+        const posMap = new Map();
+
+        ['red', 'green', 'yellow', 'blue'].forEach(color => {
+          const tokens = window.ludoEngine.players[color].tokens;
+          tokens.forEach(token => {
+            const coords = window.ludoEngine.getCoordinates(color, token.step, token.id);
+            const key = `${coords.x.toFixed(1)},${coords.y.toFixed(1)}`;
+            if (!posMap.has(key)) posMap.set(key, []);
+            posMap.get(key).push({ color, token, coords });
+          });
+        });
+
+        const validTokens = (state.turnState === 'SELECTING_TOKEN' && !window.ludoEngine.players[state.currentTurn].isAI)
+          ? window.ludoEngine.getValidTokens(state.currentTurn, state.lastDiceRoll)
+          : [];
+
+        posMap.forEach((tokenGroup) => {
+          const count = tokenGroup.length;
+
+          tokenGroup.forEach((item, index) => {
+            const { color, token, coords } = item;
+            const tokenElem = document.createElement('div');
+            tokenElem.className = `token token-${color}`;
+            tokenElem.dataset.color = color;
+            tokenElem.dataset.id = token.id;
+
+            // Compute pixel position on board
+            let posX = coords.x * cellSize;
+            let posY = coords.y * cellSize;
+
+            // Clustered offsets if multiple tokens occupy this cell
+            let scale = 1.0;
+            if (count === 2) {
+              scale = 0.85;
+              const offset = cellSize * 0.16;
+              if (index === 0) { posX -= offset; posY -= offset; }
+              else { posX += offset; posY += offset; }
+            } else if (count >= 3) {
+              scale = 0.72;
+              const offset = cellSize * 0.18;
+              const angle = (index / count) * Math.PI * 2;
+              posX += Math.cos(angle) * offset;
+              posY += Math.sin(angle) * offset;
+            }
+
+            tokenElem.style.width = `${cellSize * 0.82}px`;
+            tokenElem.style.height = `${cellSize * 0.82}px`;
+            tokenElem.style.left = `${posX + (cellSize * 0.09)}px`;
+            tokenElem.style.top = `${posY + (cellSize * 0.09)}px`;
+            tokenElem.style.transform = `scale(${scale})`;
+
+            // Check if this token is currently selectable
+            const isSelectable = validTokens.some(vt => vt.color === color && vt.id === token.id);
+            if (isSelectable) {
+              tokenElem.classList.add('selectable');
+              tokenElem.addEventListener('click', (e) => {
+                e.stopPropagation();
+                window.ludoEngine.moveToken(color, token.id);
+              });
+            }
+
+            tokenElem.innerHTML = `
+              <div class="token-inner">
+                <div class="token-pin"></div>
+              </div>
+            `;
+            tokensOverlay.appendChild(tokenElem);
+          });
+        });
+      }
+
+      /* ============================================================
+         3D ROLLING DICE ANIMATION
+         ============================================================ */
+      function animateDiceRoll(playerColor) {
+        const cube = document.getElementById(`cube-${playerColor}`);
+        cube.classList.remove('dice-rolling');
+        void cube.offsetWidth; // Trigger reflow
+        cube.classList.add('dice-rolling');
+
+        setTimeout(() => {
+          cube.classList.remove('dice-rolling');
+          updateDiceFaces(window.ludoEngine.exportState());
+        }, 550);
+      }
+
+      function updateDiceFaces(state) {
+        ['red', 'green', 'yellow', 'blue'].forEach(color => {
+          const face = document.getElementById(`face-${color}`);
+          face.innerHTML = '';
+          const roll = (color === state.currentTurn) ? state.lastDiceRoll : 6;
+          drawDiceDots(face, roll || 6);
+
+          const diceContainer = document.getElementById(`dice-${color}`);
+          if (color === state.currentTurn && state.turnState === 'WAITING_FOR_ROLL' && !window.ludoEngine.players[color].isAI) {
+            diceContainer.classList.add('clickable');
+          } else {
+            diceContainer.classList.remove('clickable');
+          }
+        });
+      }
+
+      function drawDiceDots(faceElem, number) {
+        const dotPositions = {
+          1: [4],
+          2: [0, 8],
+          3: [0, 4, 8],
+          4: [0, 2, 6, 8],
+          5: [0, 2, 4, 6, 8],
+          6: [0, 2, 3, 5, 6, 8]
+        };
+
+        const activeDots = new Set(dotPositions[number] || [4]);
+        for (let i = 0; i < 9; i++) {
+          if (activeDots.has(i)) {
+            const dot = document.createElement('div');
+            dot.className = 'dice-dot';
+            faceElem.appendChild(dot);
+          } else {
+            const empty = document.createElement('div');
+            faceElem.appendChild(empty);
+          }
+        }
+      }
+
+      /* ============================================================
+         HUD & CIRCULAR COUNTDOWN TIMER UPDATES
+         ============================================================ */
+      function updateHUDs(state) {
+        ['red', 'green', 'yellow', 'blue'].forEach(color => {
+          const hud = document.getElementById(`hud-${color}`);
+          if (color === state.currentTurn) {
+            hud.classList.add('active');
+          } else {
+            hud.classList.remove('active');
+          }
+        });
+        updateDiceFaces(state);
+      }
+
+      function updateTimerCircle(remaining, total) {
+        const current = window.ludoEngine.getCurrentPlayer();
+        const circle = document.getElementById(`timer-${current}`);
+        if (!circle) return;
+
+        const maxCircumference = 113.1; // 2 * PI * 18
+        const offset = maxCircumference * (1 - remaining / total);
+        circle.style.strokeDashoffset = offset;
+
+        if (remaining <= 3) {
+          circle.style.stroke = '#E52521';
+        } else if (remaining <= 6) {
+          circle.style.stroke = '#FFC20E';
+        } else {
+          circle.style.stroke = '#34C759';
+        }
+      }
+
+      /* ============================================================
+         VICTORY CELEBRATION
+         ============================================================ */
+      function showVictoryScreen(winnerColor) {
+        const titles = {
+          red: 'RED CHAMPION!',
+          green: 'GREEN CHAMPION!',
+          yellow: 'YELLOW CHAMPION!',
+          blue: 'BLUE CHAMPION!'
+        };
+        document.getElementById('winnerTitle').textContent = titles[winnerColor] || 'WINNER!';
+        document.getElementById('winnerSubtitle').textContent = `${winnerColor.toUpperCase()} has brought all 4 tokens Home!`;
+        victoryModal.classList.add('open');
+        triggerConfetti();
+      }
+
+      function triggerConfetti() {
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const colors = ['#FFD700', '#E52521', '#009E49', '#FFC20E', '#0072CE', '#FFFFFF'];
+
+        for (let i = 0; i < 90; i++) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * -canvas.height,
+            size: Math.random() * 8 + 4,
+            speedY: Math.random() * 3 + 2,
+            speedX: (Math.random() - 0.5) * 3,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rotation: Math.random() * 360,
+            rotSpeed: (Math.random() - 0.5) * 6
+          });
+        }
+
+        let animationId;
+        function render() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          particles.forEach(p => {
+            p.y += p.speedY;
+            p.x += p.speedX;
+            p.rotation += p.rotSpeed;
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+
+            if (p.y > canvas.height) {
+              p.y = -10;
+              p.x = Math.random() * canvas.width;
+            }
+          });
+
+          if (victoryModal.classList.contains('open')) {
+            animationId = requestAnimationFrame(render);
+          }
+        }
+        render();
+      }
+    });
+  </script>
+</body>
+</html>
