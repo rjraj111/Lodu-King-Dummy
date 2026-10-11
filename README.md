@@ -50,19 +50,19 @@ Open the cloned project in Android Studio to explore the codebase.
 3. **Review and Contribute:**
 Feel free to review the code, submit issues, or contribute to the project by sending pull requests. Your contributions are highly appreciated!
 
-## Experience the Game
+## Experience the Game (Download Release APK)
 
-If you simply want to experience the Ludo King Clone without exploring the source code, you can download the APK file and install it on your Android device.
+Download and install the pre-compiled Android release APK directly from this repository:
 
-![Installation preview](https://github.com/Vinaykpro/Ludo_King_Clone/blob/master/installation_preview.gif)
+- 📦 **Direct APK Download**: [release/LudoKing-Release-v1.0.0.apk](release/LudoKing-Release-v1.0.0.apk)
+- 🚀 **GitHub Releases**: [Latest Release v1.0.0](https://github.com/rjraj111/Lodu-King-Dummy/releases)
 
-1. **Download the APK:**
-   Click [Here](https://dl.dropboxusercontent.com/scl/fi/1xohp4h0t8t7uuicmfdxf/Ludo-King-Clone-by-Vinaykpro.apk?rlkey=597fiav4fxbfgohvydkvm7mzm&dl=0) to download the APK file.
+![Installation preview](installation_preview.gif)
 
-2. **Install on Your Device:**
-   Transfer the downloaded APK file to your Android device and install it. Make sure to enable the installation of apps from unknown sources in your device settings.
+1. **Install on Your Device:**
+   Transfer `LudoKing-Release-v1.0.0.apk` to your Android device and install it (enable "Install unknown apps" if prompted).
 
-3. **Enjoy the Game:**
-   Once installed, open the app on your device and enjoy playing the Ludo King Clone!
+2. **Enjoy the Game:**
+   Launch the app on your mobile device to play the pixel-perfect Ludo King game!
 
 Feel free to explore the source code or contribute to the project.
