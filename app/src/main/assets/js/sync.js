@@ -89,7 +89,12 @@ class SyncManager {
 
   connect() {
     if (typeof mqtt === 'undefined') {
-      setTimeout(() => this.connect(), 1000);
+      this._mqttAttempts = (this._mqttAttempts || 0) + 1;
+      if (this._mqttAttempts <= 2) {
+        setTimeout(() => this.connect(), 1200);
+      } else {
+        console.log('[SyncManager] Offline mode active: Local BroadcastChannel & localStorage sync enabled.');
+      }
       return;
     }
 

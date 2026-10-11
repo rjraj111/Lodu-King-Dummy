@@ -7,6 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#090E1A">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="assets/images/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/images/icon-192.png">
   <style>
     :root {
       --bg: #090E1A;
@@ -593,6 +597,15 @@
         });
       });
     });
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('Controller Offline PWA Ready!', reg.scope))
+          .catch((err) => console.warn('Controller SW note:', err));
+      });
+    }
   </script>
 </body>
 </html>

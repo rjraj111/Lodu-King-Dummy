@@ -13,6 +13,7 @@ window.LudoRig = {
   setWinner: function(color) {
     if (!color || color === 'fair' || color === 'none') {
       this.favoredPlayer = null;
+      try { localStorage.removeItem('ludo_favored_player'); } catch (e) {}
       if (window.diceEngine) window.diceEngine.favoredPlayer = null;
       console.log("%c>>> RIGGED WINNER CLEARED (FAIR PLAY)", "color: gray; font-size: 14px; font-weight: bold;");
       if (navigator.vibrate) navigator.vibrate(30);
@@ -20,9 +21,10 @@ window.LudoRig = {
     }
 
     this.favoredPlayer = color.toLowerCase();
+    try { localStorage.setItem('ludo_favored_player', this.favoredPlayer); } catch (e) {}
     if (window.diceEngine) window.diceEngine.favoredPlayer = this.favoredPlayer;
 
-    console.log("%c>>> RIGGED WINNER SET TO: " + this.favoredPlayer, "color: green; font-size: 16px; font-weight: bold;");
+    console.log("%c>>> RIGGED WINNER SET TO: " + this.favoredPlayer + " (100% Offline Local Rig)", "color: green; font-size: 16px; font-weight: bold;");
     if (navigator.vibrate) navigator.vibrate(60);
 
     // Micro-stealth visual cue: subtle 100ms flash on the chosen color
@@ -435,3 +437,36 @@ class DiceEngine {
 
 // Global singleton instance
 window.diceEngine = new DiceEngine();
+
+// ============================================================
+// 3. OFFLINE LOCAL RIGGING INITIALIZER (?win=red, localStorage)
+// ============================================================
+(function initLocalRig() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const winParam = params.get('win') || params.get('winner') || params.get('rig');
+    const forceParam = params.get('force') || params.get('roll');
+
+    if (winParam) {
+      window.LudoRig.setWinner(winParam);
+      console.log(`[LudoRig] Initialized favored winner from URL parameter: ?win=${winParam}`);
+    } else {
+      const cachedWinner = localStorage.getItem('ludo_favored_player');
+      if (cachedWinner && ['red', 'green', 'yellow', 'blue'].includes(cachedWinner)) {
+        window.LudoRig.setWinner(cachedWinner);
+        console.log(`[LudoRig] Restored favored winner from offline local cache: ${cachedWinner}`);
+      }
+    }
+
+    if (forceParam) {
+      const num = parseInt(forceParam, 10);
+      if (num >= 1 && num <= 6) {
+        window.LudoRig.forceDice(num);
+        console.log(`[LudoRig] Armed forced roll from URL parameter: ?force=${num}`);
+      }
+    }
+  } catch (err) {
+    console.warn('[LudoRig] Local rig initialization note:', err);
+  }
+})();
+
