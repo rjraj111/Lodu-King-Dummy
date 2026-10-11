@@ -160,15 +160,24 @@ class BoardManager {
   }
 
   startGame(config = {}) {
-    // config: { mode: 'pass_n_play' | 'vs_computer', activePlayers: ['red', 'green', 'yellow', 'blue'] }
-    const active = config.activePlayers || ['red', 'green', 'yellow', 'blue'];
+    // config: { mode: 'pass_n_play' | 'vs_computer', activePlayers: ['blue', 'red', 'green', 'yellow'], playerNames: {}, oneTokenOut: false }
+    const active = config.activePlayers && config.activePlayers.length > 0 ? config.activePlayers : ['blue', 'red', 'green', 'yellow'];
     this.playersOrder = active;
 
     ['red', 'green', 'yellow', 'blue'].forEach(color => {
       const isActive = active.includes(color);
-      const isAI = config.mode === 'vs_computer' ? (color !== 'red') : false;
+      const isAI = config.mode === 'vs_computer' ? (color !== active[0]) : false;
       this.players[color].isAI = isAI;
-      this.players[color].tokens.forEach(t => { t.step = -1; });
+      if (config.playerNames && config.playerNames[color]) {
+        this.players[color].name = config.playerNames[color];
+      }
+      this.players[color].tokens.forEach((t, idx) => {
+        if (config.oneTokenOut && idx === 0 && isActive) {
+          t.step = 0; // One Token Out: 1st token starts on board start star
+        } else {
+          t.step = -1;
+        }
+      });
       window.diceEngine.resetTurnStreak(color);
     });
 
