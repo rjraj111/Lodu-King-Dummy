@@ -182,113 +182,107 @@
          Red (Top-Left), Green (Top-Right), Blue (Bottom-Left), Yellow (Bottom-Right)
          ============================================================ -->
     <main class="game-view" id="game-view">
-      <header class="game-header-bar">
-        <button class="btn-lobby-back" id="backToLobbyBtn">
-          <span>◀</span> Lobby
-        </button>
-
-        <div class="currency-pill" id="roomPillBtn" style="cursor: pointer;" title="Remote Controller QR">
-          <span style="color: #00E676;">●</span>
-          <span id="roomCodeText" style="font-family: monospace;">ROOM: GAME123</span>
-        </div>
-
-        <div style="display: flex; gap: 6px;">
-          <button class="hud-btn-circle" id="soundToggleBtn" title="Toggle Sound">🔊</button>
-          <button class="hud-btn-circle" id="qrOpenBtn" title="Remote Controller">📱</button>
-        </div>
+      <!-- Clean Stealth Top Bar: Pause icon left, LUDO KING center, Sound right (Zero Dev UI) -->
+      <header class="game-clean-header">
+        <button class="header-icon-control" id="btnGameMenu" title="Pause / Menu">⏸</button>
+        <span class="game-header-title" id="gameHeaderTitle">LUDO KING</span>
+        <button class="header-icon-control" id="soundToggleBtn" title="Toggle Sound">🔊</button>
       </header>
 
-      <!-- 15x15 Classic Board Shell (Matching Image 2) -->
-      <div class="board-outer-shell">
-        <div class="board-15x15-grid" id="boardGrid">
-          <!-- Populated by js/board.js -->
-        </div>
-        <!-- Pin-style token sprite overlay -->
-        <div class="board-tokens-overlay" id="boardTokensOverlay"></div>
-      </div>
-
-      <!-- 4 Corner Player Turn Boxes & 3D Rolling Dice -->
-      <section class="players-turn-boxes">
-        <!-- Red Box (Top-Left) -->
-        <div class="turn-box box-red active" id="turnbox-red">
-          <div class="avatar-timer-slot">
+      <!-- TOP CORNER HUD ROW: Red (Top-Left) & Green (Top-Right) -->
+      <div class="hud-corner-row">
+        <!-- Red Corner HUD (Top-Left, beside Red Base) -->
+        <div class="corner-player-box box-red active" id="corner-red">
+          <div class="corner-avatar-ring">
             <svg class="timer-circle-svg" viewBox="0 0 44 44">
               <circle class="timer-bg-ring" cx="22" cy="22" r="18" />
               <circle class="timer-fg-ring" id="timer-ring-red" cx="22" cy="22" r="18" />
             </svg>
-            <div class="player-thumb" style="background: var(--color-red);">👑</div>
+            <div class="corner-avatar-disc" id="avatar-red" style="background: var(--color-red);" title="Red Player">👑</div>
           </div>
-          <div class="player-meta">
-            <span class="player-label">Player Red</span>
-            <span class="player-sublabel">Turn</span>
+          <div class="corner-name-col">
+            <span class="corner-player-name" id="name-red">Player 1</span>
+            <span class="corner-player-type" id="type-red">YOU</span>
           </div>
-          <div class="dice-slot clickable" id="diceslot-red" data-color="red">
+          <div class="corner-dice-slot clickable" id="diceslot-red" data-color="red" title="Roll Dice">
             <div class="dice-cube" id="cube-red">
               <div class="dice-face" id="face-red"></div>
             </div>
           </div>
         </div>
 
-        <!-- Green Box (Top-Right) -->
-        <div class="turn-box box-green" id="turnbox-green">
-          <div class="avatar-timer-slot">
-            <svg class="timer-circle-svg" viewBox="0 0 44 44">
-              <circle class="timer-bg-ring" cx="22" cy="22" r="18" />
-              <circle class="timer-fg-ring" id="timer-ring-green" cx="22" cy="22" r="18" />
-            </svg>
-            <div class="player-thumb" style="background: var(--color-green);">🤖</div>
-          </div>
-          <div class="player-meta">
-            <span class="player-label">Green Bot</span>
-            <span class="player-sublabel">Turn</span>
-          </div>
-          <div class="dice-slot" id="diceslot-green" data-color="green">
+        <!-- Green Corner HUD (Top-Right, beside Green Base) -->
+        <div class="corner-player-box box-green" id="corner-green">
+          <div class="corner-dice-slot" id="diceslot-green" data-color="green" title="Roll Dice">
             <div class="dice-cube" id="cube-green">
               <div class="dice-face" id="face-green"></div>
             </div>
           </div>
+          <div class="corner-name-col" style="text-align: right;">
+            <span class="corner-player-name" id="name-green">Player 2</span>
+            <span class="corner-player-type" id="type-green">BOT</span>
+          </div>
+          <div class="corner-avatar-ring">
+            <svg class="timer-circle-svg" viewBox="0 0 44 44">
+              <circle class="timer-bg-ring" cx="22" cy="22" r="18" />
+              <circle class="timer-fg-ring" id="timer-ring-green" cx="22" cy="22" r="18" />
+            </svg>
+            <div class="corner-avatar-disc" id="avatar-green" style="background: var(--color-green);" title="Green Player">🤖</div>
+          </div>
         </div>
+      </div>
 
-        <!-- Blue Box (Bottom-Left in Image 2) -->
-        <div class="turn-box box-blue" id="turnbox-blue">
-          <div class="avatar-timer-slot">
+      <!-- 15x15 Classic Board Shell (Matching Image 2) -->
+      <div class="board-outer-shell">
+        <div class="board-15x15-grid" id="boardGrid">
+          <!-- Populated by js/board.js with clean center triangles meeting at (50, 50) -->
+        </div>
+        <!-- Pin-style token sprite overlay -->
+        <div class="board-tokens-overlay" id="boardTokensOverlay"></div>
+      </div>
+
+      <!-- BOTTOM CORNER HUD ROW: Blue (Bottom-Left) & Yellow (Bottom-Right) -->
+      <div class="hud-corner-row hud-corner-row-bottom">
+        <!-- Blue Corner HUD (Bottom-Left, beside Blue Base) -->
+        <div class="corner-player-box box-blue" id="corner-blue">
+          <div class="corner-avatar-ring">
             <svg class="timer-circle-svg" viewBox="0 0 44 44">
               <circle class="timer-bg-ring" cx="22" cy="22" r="18" />
               <circle class="timer-fg-ring" id="timer-ring-blue" cx="22" cy="22" r="18" />
             </svg>
-            <div class="player-thumb" style="background: var(--color-blue);">🤖</div>
+            <div class="corner-avatar-disc" id="avatar-blue" style="background: var(--color-blue);" title="Blue Player">🤖</div>
           </div>
-          <div class="player-meta">
-            <span class="player-label">Blue Bot</span>
-            <span class="player-sublabel">Turn</span>
+          <div class="corner-name-col">
+            <span class="corner-player-name" id="name-blue">Player 3</span>
+            <span class="corner-player-type" id="type-blue">BOT</span>
           </div>
-          <div class="dice-slot" id="diceslot-blue" data-color="blue">
+          <div class="corner-dice-slot" id="diceslot-blue" data-color="blue" title="Roll Dice">
             <div class="dice-cube" id="cube-blue">
               <div class="dice-face" id="face-blue"></div>
             </div>
           </div>
         </div>
 
-        <!-- Yellow Box (Bottom-Right in Image 2) -->
-        <div class="turn-box box-yellow" id="turnbox-yellow">
-          <div class="avatar-timer-slot">
-            <svg class="timer-circle-svg" viewBox="0 0 44 44">
-              <circle class="timer-bg-ring" cx="22" cy="22" r="18" />
-              <circle class="timer-fg-ring" id="timer-ring-yellow" cx="22" cy="22" r="18" />
-            </svg>
-            <div class="player-thumb" style="background: var(--color-yellow);">🤖</div>
-          </div>
-          <div class="player-meta">
-            <span class="player-label">Yellow Bot</span>
-            <span class="player-sublabel">Turn</span>
-          </div>
-          <div class="dice-slot" id="diceslot-yellow" data-color="yellow">
+        <!-- Yellow Corner HUD (Bottom-Right, beside Yellow Base) -->
+        <div class="corner-player-box box-yellow" id="corner-yellow">
+          <div class="corner-dice-slot" id="diceslot-yellow" data-color="yellow" title="Roll Dice">
             <div class="dice-cube" id="cube-yellow">
               <div class="dice-face" id="face-yellow"></div>
             </div>
           </div>
+          <div class="corner-name-col" style="text-align: right;">
+            <span class="corner-player-name" id="name-yellow">Player 4</span>
+            <span class="corner-player-type" id="type-yellow">BOT</span>
+          </div>
+          <div class="corner-avatar-ring">
+            <svg class="timer-circle-svg" viewBox="0 0 44 44">
+              <circle class="timer-bg-ring" cx="22" cy="22" r="18" />
+              <circle class="timer-fg-ring" id="timer-ring-yellow" cx="22" cy="22" r="18" />
+            </svg>
+            <div class="corner-avatar-disc" id="avatar-yellow" style="background: var(--color-yellow);" title="Yellow Player">🤖</div>
+          </div>
         </div>
-      </section>
+      </div>
     </main>
 
   </div>
@@ -329,6 +323,16 @@
         <button class="btn-primary-gold" id="btnStartMatch" style="flex: 1;">START GAME</button>
         <button class="btn-primary-gold" id="btnCloseSetup" style="background: #334155; flex: 0.6;">CANCEL</button>
       </div>
+    </div>
+  </div>
+
+  <!-- PAUSE / IN-GAME MENU MODAL -->
+  <div class="modal-backdrop" id="pauseModal">
+    <div class="pause-menu-card">
+      <h3 class="pause-title">GAME PAUSED</h3>
+      <button class="btn-menu-action" id="btnResumeGame">RESUME GAME</button>
+      <button class="btn-menu-action" id="btnPauseSoundToggle">SOUND: ON</button>
+      <button class="btn-menu-action" id="btnExitLobby" style="color: #FF8A80;">EXIT TO LOBBY</button>
     </div>
   </div>
 
@@ -383,28 +387,31 @@
       const boardGrid = document.getElementById('boardGrid');
       const tokensOverlay = document.getElementById('boardTokensOverlay');
       const soundToggleBtn = document.getElementById('soundToggleBtn');
-      const qrOpenBtn = document.getElementById('qrOpenBtn');
-      const roomPillBtn = document.getElementById('roomPillBtn');
+      const btnGameMenu = document.getElementById('btnGameMenu');
+      const pauseModal = document.getElementById('pauseModal');
+      const btnResumeGame = document.getElementById('btnResumeGame');
+      const btnPauseSoundToggle = document.getElementById('btnPauseSoundToggle');
+      const btnExitLobby = document.getElementById('btnExitLobby');
+      const lobbyView = document.getElementById('lobby-view');
+      const gameView = document.getElementById('game-view');
       const qrModal = document.getElementById('qrModal');
       const closeQrBtn = document.getElementById('closeQrBtn');
       const copyLinkBtn = document.getElementById('copyLinkBtn');
       const qrImg = document.getElementById('qrImg');
       const ctrlUrlText = document.getElementById('ctrlUrlText');
-      const roomCodeText = document.getElementById('roomCodeText');
       const victoryModal = document.getElementById('victoryModal');
       const btnPlayAgain = document.getElementById('btnPlayAgain');
 
-      // Initialize Sync Manager
+      // Initialize Sync Manager silently in background (supports ?room=...)
       const syncManager = new SyncManager(false);
-      roomCodeText.textContent = `ROOM: ${syncManager.getRoomId()}`;
       syncManager.connect();
 
-      // Remote command listener
+      // Remote command listener (controller.html sync)
       syncManager.onControlCommand = (data) => {
         if (!data || !data.action) return;
         if (data.action === 'SET_WINNER') {
           window.diceEngine.setFavoredPlayer(data.player);
-          triggerCrownFlash();
+          triggerSilentHaptic();
         } else if (data.action === 'FORCE_DICE') {
           window.diceEngine.queueOverride(data.value);
         } else if (data.action === 'AUTO_CAPTURE') {
@@ -414,9 +421,9 @@
         }
       };
 
-      // Build 15x15 board matching Image 2
+      // Build 15x15 board matching Image 2 (Clean center triangles)
       buildBoardDOM();
-      setupStealthLogoMatrix();
+      setupStealthTriggers();
 
       // Board state callbacks
       window.boardManager.onStateChange = (state) => {
@@ -441,36 +448,69 @@
         updateTimerCircle(remaining, total);
       };
 
-      // Sound toggle
+      // Sound toggle in top header
       soundToggleBtn.addEventListener('click', () => {
         const muted = window.soundEngine.toggleMute();
         soundToggleBtn.textContent = muted ? '🔇' : '🔊';
+        if (btnPauseSoundToggle) btnPauseSoundToggle.textContent = muted ? 'SOUND: OFF' : 'SOUND: ON';
       });
 
-      // QR Modals
+      // Pause Modal Controls
+      if (btnGameMenu) {
+        btnGameMenu.addEventListener('click', () => {
+          if (window.soundEngine) window.soundEngine.playTap();
+          pauseModal.classList.add('open');
+        });
+      }
+
+      if (btnResumeGame) {
+        btnResumeGame.addEventListener('click', () => {
+          if (window.soundEngine) window.soundEngine.playTap();
+          pauseModal.classList.remove('open');
+        });
+      }
+
+      if (btnPauseSoundToggle) {
+        btnPauseSoundToggle.addEventListener('click', () => {
+          const muted = window.soundEngine.toggleMute();
+          btnPauseSoundToggle.textContent = muted ? 'SOUND: OFF' : 'SOUND: ON';
+          soundToggleBtn.textContent = muted ? '🔇' : '🔊';
+        });
+      }
+
+      if (btnExitLobby) {
+        btnExitLobby.addEventListener('click', () => {
+          if (window.soundEngine) window.soundEngine.playTap();
+          pauseModal.classList.remove('open');
+          gameView.classList.remove('active');
+          lobbyView.style.display = 'flex';
+        });
+      }
+
+      // Controller QR link helper (accessible via secret title tap or dev)
       const openQr = () => {
         const url = syncManager.getControllerUrl();
-        ctrlUrlText.textContent = url;
-        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`;
-        qrModal.classList.add('open');
+        if (ctrlUrlText) ctrlUrlText.textContent = url;
+        if (qrImg) qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`;
+        if (qrModal) qrModal.classList.add('open');
       };
-      qrOpenBtn.addEventListener('click', openQr);
-      roomPillBtn.addEventListener('click', openQr);
-      closeQrBtn.addEventListener('click', () => qrModal.classList.remove('open'));
+      if (closeQrBtn) closeQrBtn.addEventListener('click', () => qrModal.classList.remove('open'));
 
-      copyLinkBtn.addEventListener('click', () => {
-        navigator.clipboard?.writeText(syncManager.getControllerUrl()).then(() => {
-          copyLinkBtn.textContent = 'Copied!';
-          setTimeout(() => copyLinkBtn.textContent = 'Copy Link', 2000);
+      if (copyLinkBtn) {
+        copyLinkBtn.addEventListener('click', () => {
+          navigator.clipboard?.writeText(syncManager.getControllerUrl()).then(() => {
+            copyLinkBtn.textContent = 'Copied!';
+            setTimeout(() => copyLinkBtn.textContent = 'Copy Link', 2000);
+          });
         });
-      });
+      }
 
       btnPlayAgain.addEventListener('click', () => {
         victoryModal.classList.remove('open');
         window.boardManager.startGame();
       });
 
-      // Dice Clicks
+      // Dice Clicks from 4 Corner Boxes
       ['red', 'green', 'blue', 'yellow'].forEach(color => {
         const diceSlot = document.getElementById(`diceslot-${color}`);
         if (diceSlot) {
@@ -518,24 +558,19 @@
           boardGrid.appendChild(yardDiv);
         });
 
-        // 2. Center Finish Goal (col: 7/10, row: 7/10)
+        // 2. Center Finish Goal (col: 7/10, row: 7/10) - NO center badge, 4 triangles meeting at (50, 50)
         const centerGoal = document.createElement('div');
         centerGoal.className = 'center-goal';
 
-        // 4 Colored Triangles: Left Red, Top Green, Right Yellow, Bottom Blue (Image 2)
+        // 4 Colored Triangles meeting cleanly at center point (Image 2)
+        // Red (Left), Green (Top), Yellow (Right), Blue (Bottom)
         centerGoal.innerHTML = `
           <svg class="center-goal-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <polygon points="0,0 100,0 50,50" fill="var(--color-green)" />
-            <polygon points="100,0 100,100 50,50" fill="var(--color-yellow)" />
-            <polygon points="100,100 0,100 50,50" fill="var(--color-blue)" />
-            <polygon points="0,100 0,0 50,50" fill="var(--color-red)" />
+            <polygon id="tri-green" class="triangle-clean" points="0,0 100,0 50,50" fill="var(--color-green)" stroke="#111" stroke-width="0.75" data-color="green" />
+            <polygon id="tri-yellow" class="triangle-clean" points="100,0 100,100 50,50" fill="var(--color-yellow)" stroke="#111" stroke-width="0.75" data-color="yellow" />
+            <polygon id="tri-blue" class="triangle-clean" points="100,100 0,100 50,50" fill="var(--color-blue)" stroke="#111" stroke-width="0.75" data-color="blue" />
+            <polygon id="tri-red" class="triangle-clean" points="0,100 0,0 50,50" fill="var(--color-red)" stroke="#111" stroke-width="0.75" data-color="red" />
           </svg>
-          <div class="center-logo-disc" id="centerLogoDisc">
-            <svg class="crown-board-icon" id="crownBoardIcon" viewBox="0 0 64 64">
-              <path d="M6 50h52v6H6zm6-6l-4-26 14 10 10-18 10 18 14-10-4 26z" fill="#FFD700" stroke="#FFFFFF" stroke-width="1.8"/>
-            </svg>
-            <span class="logo-board-label">LUDO<br>KING</span>
-          </div>
         `;
         boardGrid.appendChild(centerGoal);
 
@@ -599,56 +634,107 @@
       }
 
       /* ============================================================
-         CENTER LOGO STEALTH TAP MATRIX
+         STEALTH WINNER TRIGGERS
+         1. Tap on center finish triangle of that color (Red, Green, Blue, Yellow)
+         2. Long-press corner avatar for 1.5 seconds
+         3. Triple tap center point (50, 50) resets to Fair (null)
+         4. Silent physical haptic feedback - zero UI indicators!
          ============================================================ */
-      function setupStealthLogoMatrix() {
-        const centerLogo = document.getElementById('centerLogoDisc');
-        let tapCount = 0;
-        let lastTapTime = 0;
-
-        centerLogo.addEventListener('pointerdown', (e) => {
-          e.preventDefault();
-          const rect = centerLogo.getBoundingClientRect();
-          const dx = (e.clientX - rect.left) - rect.width / 2;
-          const dy = (e.clientY - rect.top) - rect.height / 2;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const now = Date.now();
-
-          // Triple tap center = Fair reset
-          if (dist < rect.width * 0.28) {
-            if (now - lastTapTime < 1100) tapCount++;
-            else tapCount = 1;
-            lastTapTime = now;
-
-            if (tapCount >= 3) {
-              window.diceEngine.setFavoredPlayer(null);
-              triggerCrownFlash();
-              tapCount = 0;
-            }
-            return;
+      function setupStealthTriggers() {
+        // A. Tap center finish triangle
+        ['red', 'green', 'blue', 'yellow'].forEach(color => {
+          const tri = document.getElementById(`tri-${color}`);
+          if (tri) {
+            tri.addEventListener('pointerdown', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.diceEngine.setFavoredPlayer(color);
+              triggerSilentHaptic();
+              console.log(`[Stealth] Favored winner set to: ${color}`);
+            });
           }
-
-          let selected = null;
-          if (Math.abs(dy) > Math.abs(dx)) {
-            selected = dy < 0 ? 'green' : 'blue';
-          } else {
-            selected = dx > 0 ? 'yellow' : 'red';
-          }
-
-          window.diceEngine.setFavoredPlayer(selected);
-          triggerCrownFlash();
         });
+
+        // Triple tap near center point (50, 50) resets favored player to Fair
+        const centerGoal = document.querySelector('.center-goal');
+        let centerTapCount = 0;
+        let lastCenterTap = 0;
+        if (centerGoal) {
+          centerGoal.addEventListener('pointerdown', (e) => {
+            const now = Date.now();
+            const rect = centerGoal.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+            if (dist < rect.width * 0.22) {
+              if (now - lastCenterTap < 900) {
+                centerTapCount++;
+              } else {
+                centerTapCount = 1;
+              }
+              lastCenterTap = now;
+              if (centerTapCount >= 3) {
+                window.diceEngine.setFavoredPlayer(null);
+                triggerSilentHaptic();
+                console.log('[Stealth] Favored winner reset to: Fair (null)');
+                centerTapCount = 0;
+              }
+            }
+          });
+        }
+
+        // B. Long-press corner avatar for 1.5s
+        ['red', 'green', 'blue', 'yellow'].forEach(color => {
+          const avatar = document.getElementById(`avatar-${color}`);
+          if (avatar) {
+            let pressTimer = null;
+            const startPress = (e) => {
+              pressTimer = setTimeout(() => {
+                window.diceEngine.setFavoredPlayer(color);
+                triggerSilentHaptic();
+                console.log(`[Stealth] Avatar long-press favored winner: ${color}`);
+              }, 1500);
+            };
+            const cancelPress = () => {
+              if (pressTimer) {
+                clearTimeout(pressTimer);
+                pressTimer = null;
+              }
+            };
+            avatar.addEventListener('pointerdown', startPress);
+            avatar.addEventListener('pointerup', cancelPress);
+            avatar.addEventListener('pointercancel', cancelPress);
+            avatar.addEventListener('pointerleave', cancelPress);
+          }
+        });
+
+        // Stealth Title Triple Tap -> Controller QR (if needed)
+        const headerTitle = document.getElementById('gameHeaderTitle');
+        let titleTapCount = 0;
+        let lastTitleTap = 0;
+        if (headerTitle) {
+          headerTitle.addEventListener('click', () => {
+            const now = Date.now();
+            if (now - lastTitleTap < 800) {
+              titleTapCount++;
+            } else {
+              titleTapCount = 1;
+            }
+            lastTitleTap = now;
+            if (titleTapCount >= 3) {
+              openQr();
+              titleTapCount = 0;
+            }
+          });
+        }
       }
 
-      function triggerCrownFlash() {
-        const crown = document.getElementById('crownBoardIcon');
-        crown.classList.add('flash');
+      function triggerSilentHaptic() {
         if (window.AndroidNative && window.AndroidNative.triggerHaptic) {
           window.AndroidNative.triggerHaptic(25);
         } else if (navigator.vibrate) {
           navigator.vibrate(25);
         }
-        setTimeout(() => crown.classList.remove('flash'), 110);
       }
 
       /* ============================================================
@@ -792,10 +878,17 @@
 
       function updateTurnBoxes(state) {
         ['red', 'green', 'blue', 'yellow'].forEach(color => {
-          const box = document.getElementById(`turnbox-${color}`);
+          const box = document.getElementById(`corner-${color}`) || document.getElementById(`turnbox-${color}`);
           if (box) {
-            if (color === state.currentTurn) box.classList.add('active');
-            else box.classList.remove('active');
+            const isActive = window.boardManager.playersOrder.includes(color);
+            if (!isActive) {
+              box.style.opacity = '0.35';
+              box.classList.remove('active');
+            } else {
+              box.style.opacity = '1';
+              if (color === state.currentTurn) box.classList.add('active');
+              else box.classList.remove('active');
+            }
           }
         });
         updateDiceFaces(state);
