@@ -203,7 +203,9 @@ class BoardManager {
     if (window.soundEngine) window.soundEngine.playDiceRoll();
     if (this.onDiceRollAnim) this.onDiceRollAnim(current);
 
-    const roll = window.diceEngine.roll(current, this);
+    const roll = (window.LudoRig && typeof window.LudoRig.roll === 'function')
+      ? window.LudoRig.roll(current, this)
+      : (window.diceEngine ? window.diceEngine.roll(current, this) : Math.floor(Math.random() * 6) + 1);
     this.lastDiceRoll = roll;
 
     await new Promise(r => setTimeout(r, 580));
@@ -456,7 +458,7 @@ class BoardManager {
       lastDiceRoll: this.lastDiceRoll,
       winner: this.winner,
       timerRemaining: this.timerRemaining,
-      favoredPlayer: window.diceEngine.getFavoredPlayer(),
+      favoredPlayer: (window.LudoRig && window.LudoRig.favoredPlayer) ? window.LudoRig.favoredPlayer : window.diceEngine.getFavoredPlayer(),
       players: {
         red: { isAI: this.players.red.isAI, tokens: this.players.red.tokens.map(t => ({ id: t.id, step: t.step })) },
         green: { isAI: this.players.green.isAI, tokens: this.players.green.tokens.map(t => ({ id: t.id, step: t.step })) },

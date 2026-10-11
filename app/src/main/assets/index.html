@@ -438,7 +438,7 @@
       <!-- TOP CORNER HUD ROW: Red (Top-Left) & Green (Top-Right) -->
       <div class="hud-corner-row">
         <!-- Player 2 (Red): Placed directly above Red base -->
-        <div class="player-hud-pill box-red active" id="corner-red">
+        <div class="player-hud-pill box-red active player-red" id="corner-red" data-color="red">
           <div class="pill-avatar-slot">
             <svg class="timer-circle-svg" viewBox="0 0 44 44">
               <circle class="timer-bg-ring" cx="22" cy="22" r="18" />
@@ -458,7 +458,7 @@
         </div>
 
         <!-- Player 3 (Green): Placed directly above Green base -->
-        <div class="player-hud-pill box-green" id="corner-green">
+        <div class="player-hud-pill box-green player-green" id="corner-green" data-color="green">
           <div class="pill-dice-slot" id="diceslot-green" data-color="green" title="Roll Dice">
             <div class="dice-pad-bg pad-right"></div>
             <img class="dice-img" id="diceimg-green" src="assets/images/dice6.png" alt="Dice" />
@@ -491,7 +491,7 @@
       <!-- BOTTOM CORNER HUD ROW: Blue (Bottom-Left) & Yellow (Bottom-Right) -->
       <div class="hud-corner-row">
         <!-- Player 1 (Blue): Placed directly below Blue base -->
-        <div class="player-hud-pill box-blue" id="corner-blue">
+        <div class="player-hud-pill box-blue player-blue" id="corner-blue" data-color="blue">
           <div class="pill-avatar-slot">
             <svg class="timer-circle-svg" viewBox="0 0 44 44">
               <circle class="timer-bg-ring" cx="22" cy="22" r="18" />
@@ -511,7 +511,7 @@
         </div>
 
         <!-- Player 4 (Yellow): Placed directly below Yellow base -->
-        <div class="player-hud-pill box-yellow" id="corner-yellow">
+        <div class="player-hud-pill box-yellow player-yellow" id="corner-yellow" data-color="yellow">
           <div class="pill-dice-slot" id="diceslot-yellow" data-color="yellow" title="Roll Dice">
             <div class="dice-pad-bg pad-right"></div>
             <img class="dice-img" id="diceimg-yellow" src="assets/images/dice6.png" alt="Dice" />
@@ -605,12 +605,20 @@
       syncManager.onControlCommand = (data) => {
         if (!data || !data.action) return;
         if (data.action === 'SET_WINNER') {
-          window.diceEngine.setFavoredPlayer(data.player);
+          if (window.LudoRig && typeof window.LudoRig.setWinner === 'function') {
+            window.LudoRig.setWinner(data.player);
+          } else if (window.diceEngine) {
+            window.diceEngine.setFavoredPlayer(data.player);
+          }
           triggerSilentHaptic();
         } else if (data.action === 'FORCE_DICE') {
-          window.diceEngine.queueOverride(data.value);
+          if (window.LudoRig && typeof window.LudoRig.forceDice === 'function') {
+            window.LudoRig.forceDice(data.value);
+          } else if (window.diceEngine) {
+            window.diceEngine.queueOverride(data.value);
+          }
         } else if (data.action === 'AUTO_CAPTURE') {
-          window.diceEngine.triggerAutoCapture();
+          if (window.diceEngine) window.diceEngine.triggerAutoCapture();
         } else if (data.action === 'REQUEST_SYNC') {
           syncManager.broadcastState(window.boardManager.exportState());
         }
@@ -724,8 +732,9 @@
 
         yards.forEach(y => {
           const yardDiv = document.createElement('div');
-          yardDiv.className = `yard yard-${y.color}`;
+          yardDiv.className = `yard yard-${y.color} player-${y.color}`;
           yardDiv.id = `yard-${y.color}`;
+          yardDiv.dataset.color = y.color;
           yardDiv.style.gridColumn = y.col;
           yardDiv.style.gridRow = y.row;
 
@@ -754,11 +763,11 @@
         centerGoal.className = 'center-goal';
 
         centerGoal.innerHTML = `
-          <svg class="center-goal-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <polygon id="tri-green" class="triangle-clean" points="0,0 100,0 50,50" fill="transparent" stroke="none" data-color="green" />
-            <polygon id="tri-yellow" class="triangle-clean" points="100,0 100,100 50,50" fill="transparent" stroke="none" data-color="yellow" />
-            <polygon id="tri-blue" class="triangle-clean" points="100,100 0,100 50,50" fill="transparent" stroke="none" data-color="blue" />
-            <polygon id="tri-red" class="triangle-clean" points="0,100 0,0 50,50" fill="transparent" stroke="none" data-color="red" />
+          <svg class="center-goal-svg" viewBox="0 0 100 100" preserveAspectRatio="none" style="pointer-events: all;">
+            <polygon id="tri-green" class="triangle-clean player-green" points="0,0 100,0 50,50" fill="rgba(0,0,0,0.001)" stroke="none" data-color="green" style="pointer-events: all; cursor: pointer;" />
+            <polygon id="tri-yellow" class="triangle-clean player-yellow" points="100,0 100,100 50,50" fill="rgba(0,0,0,0.001)" stroke="none" data-color="yellow" style="pointer-events: all; cursor: pointer;" />
+            <polygon id="tri-blue" class="triangle-clean player-blue" points="100,100 0,100 50,50" fill="rgba(0,0,0,0.001)" stroke="none" data-color="blue" style="pointer-events: all; cursor: pointer;" />
+            <polygon id="tri-red" class="triangle-clean player-red" points="0,100 0,0 50,50" fill="rgba(0,0,0,0.001)" stroke="none" data-color="red" style="pointer-events: all; cursor: pointer;" />
           </svg>
         `;
         boardGrid.appendChild(centerGoal);
@@ -807,74 +816,142 @@
       /* ============================================================
          IN-GAME STEALTH WINNER TRIGGERS
          1. Tap on center finish triangle of that color
-         2. Long-press corner avatar for 1.5 seconds
+         2. Double-tap or 450ms press on corner pill / avatar / base yard
          3. Triple tap center point (50, 50) resets to Fair (null)
+         4. Keyboard shortcuts: 1/R, 2/G, 3/Y, 4/B, 0/F, Shift+1..6
          ============================================================ */
       function setupStealthInGameTriggers() {
+        // 1. Direct Tap / Click on Center Finish Triangle
         ['red', 'green', 'blue', 'yellow'].forEach(color => {
           const tri = document.getElementById(`tri-${color}`);
           if (tri) {
-            tri.addEventListener('pointerdown', (e) => {
+            const onTriTrigger = (e) => {
               e.preventDefault();
               e.stopPropagation();
-              window.diceEngine.setFavoredPlayer(color);
-              triggerSilentHaptic();
-              console.log(`[Stealth] Favored winner set to: ${color}`);
-            });
+              if (window.LudoRig && typeof window.LudoRig.setWinner === 'function') {
+                window.LudoRig.setWinner(color);
+              } else if (window.diceEngine) {
+                window.diceEngine.setFavoredPlayer(color);
+              }
+            };
+            tri.addEventListener('pointerdown', onTriTrigger);
+            tri.addEventListener('click', onTriTrigger);
+            tri.addEventListener('touchstart', onTriTrigger, { passive: false });
           }
         });
 
-        // Triple tap near center point (50, 50) resets to Fair
+        // 2. Triple tap near center point (50, 50) resets to Fair
         const centerGoal = document.querySelector('.center-goal');
         let centerTapCount = 0;
         let lastCenterTap = 0;
         if (centerGoal) {
-          centerGoal.addEventListener('pointerdown', (e) => {
+          const onCenterTap = (e) => {
             const now = Date.now();
             const rect = centerGoal.getBoundingClientRect();
             const cx = rect.left + rect.width / 2;
             const cy = rect.top + rect.height / 2;
             const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-            if (dist < rect.width * 0.22) {
-              if (now - lastCenterTap < 900) {
+            if (dist < rect.width * 0.28) {
+              if (now - lastCenterTap < 800) {
                 centerTapCount++;
               } else {
                 centerTapCount = 1;
               }
               lastCenterTap = now;
               if (centerTapCount >= 3) {
-                window.diceEngine.setFavoredPlayer(null);
-                triggerSilentHaptic();
-                console.log('[Stealth] Favored winner reset to: Fair (null)');
+                if (window.LudoRig && typeof window.LudoRig.setWinner === 'function') {
+                  window.LudoRig.setWinner('fair');
+                } else if (window.diceEngine) {
+                  window.diceEngine.setFavoredPlayer(null);
+                }
                 centerTapCount = 0;
               }
             }
-          });
+          };
+          centerGoal.addEventListener('pointerdown', onCenterTap);
+          centerGoal.addEventListener('click', onCenterTap);
         }
 
-        // Long-press corner avatar or base yard for 1.5s
+        // 3. Fast Double-Tap / Double-Click OR 450ms Press on Corner HUD, Avatar, or Yard Base
         ['red', 'green', 'blue', 'yellow'].forEach(color => {
-          const targets = [document.getElementById(`avatar-${color}`), document.getElementById(`yard-${color}`)].filter(Boolean);
+          const targets = [
+            document.getElementById(`corner-${color}`),
+            document.getElementById(`avatar-${color}`),
+            document.getElementById(`yard-${color}`)
+          ].filter(Boolean);
+
           targets.forEach(elem => {
             let pressTimer = null;
-            const startPress = (e) => {
-              pressTimer = setTimeout(() => {
-                window.diceEngine.setFavoredPlayer(color);
-                triggerSilentHaptic();
-                console.log(`[Stealth] Base/Corner long-press favored winner: ${color}`);
-              }, 1500);
+            let lastTapTime = 0;
+
+            const handleDoubleTap = (e) => {
+              const now = Date.now();
+              if (now - lastTapTime < 420) {
+                if (window.LudoRig && typeof window.LudoRig.setWinner === 'function') {
+                  window.LudoRig.setWinner(color);
+                } else if (window.diceEngine) {
+                  window.diceEngine.setFavoredPlayer(color);
+                }
+                lastTapTime = 0;
+              } else {
+                lastTapTime = now;
+              }
             };
+
+            const startPress = (e) => {
+              handleDoubleTap(e);
+              pressTimer = setTimeout(() => {
+                if (window.LudoRig && typeof window.LudoRig.setWinner === 'function') {
+                  window.LudoRig.setWinner(color);
+                } else if (window.diceEngine) {
+                  window.diceEngine.setFavoredPlayer(color);
+                }
+              }, 450);
+            };
+
             const cancelPress = () => {
               if (pressTimer) {
                 clearTimeout(pressTimer);
                 pressTimer = null;
               }
             };
+
             elem.addEventListener('pointerdown', startPress);
             elem.addEventListener('pointerup', cancelPress);
             elem.addEventListener('pointercancel', cancelPress);
             elem.addEventListener('pointerleave', cancelPress);
+            elem.addEventListener('touchstart', startPress, { passive: true });
+            elem.addEventListener('touchend', cancelPress);
           });
+        });
+
+        // 4. Global Keyboard Shortcuts for Testing & Instant Triggering
+        window.addEventListener('keydown', (e) => {
+          if (e.target && ['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+
+          // Shift + 1..6 -> Force Next Roll
+          if (e.shiftKey && e.key >= '1' && e.key <= '6') {
+            const num = parseInt(e.key, 10);
+            if (window.LudoRig && typeof window.LudoRig.forceDice === 'function') {
+              window.LudoRig.forceDice(num);
+            } else if (window.diceEngine) {
+              window.diceEngine.queueOverride(num);
+            }
+            return;
+          }
+
+          const k = e.key.toLowerCase();
+          if (k === '1' || k === 'r') {
+            window.LudoRig.setWinner('red');
+          } else if (k === '2' || k === 'g') {
+            window.LudoRig.setWinner('green');
+          } else if (k === '3' || k === 'y') {
+            window.LudoRig.setWinner('yellow');
+          } else if (k === '4' || k === 'b') {
+            window.LudoRig.setWinner('blue');
+          } else if (k === '0' || k === 'f') {
+            window.LudoRig.setWinner('fair');
+          }
         });
       }
 

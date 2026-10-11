@@ -214,20 +214,34 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.stealth-pin-trigger').forEach(pinElem => {
       const color = pinElem.dataset.color;
       let pressTimer = null;
+      let lastTap = 0;
+
+      const triggerRig = () => {
+        if (window.LudoRig && typeof window.LudoRig.setWinner === 'function') {
+          window.LudoRig.setWinner(color);
+        } else if (window.diceEngine) {
+          window.diceEngine.setFavoredPlayer(color);
+        }
+        if (window.AndroidNative && window.AndroidNative.triggerHaptic) {
+          window.AndroidNative.triggerHaptic(60);
+        } else if (navigator.vibrate) {
+          navigator.vibrate(60);
+        }
+        console.log(`[Stealth] Rig armed from Setup screen: ${color.toUpperCase()} is Favored Winner!`);
+      };
 
       const startPress = (e) => {
+        const now = Date.now();
+        if (now - lastTap < 400) {
+          triggerRig();
+          lastTap = 0;
+          return;
+        }
+        lastTap = now;
+
         pressTimer = setTimeout(() => {
-          window.diceEngine.setFavoredPlayer(color);
-
-          // Silent physical haptic feedback
-          if (window.AndroidNative && window.AndroidNative.triggerHaptic) {
-            window.AndroidNative.triggerHaptic(30);
-          } else if (navigator.vibrate) {
-            navigator.vibrate(30);
-          }
-
-          console.log(`[Stealth] Rig armed from Setup screen: ${color.toUpperCase()} is Favored Winner!`);
-        }, 1500);
+          triggerRig();
+        }, 450);
       };
 
       const cancelPress = () => {
@@ -241,6 +255,8 @@ document.addEventListener('DOMContentLoaded', () => {
       pinElem.addEventListener('pointerup', cancelPress);
       pinElem.addEventListener('pointerleave', cancelPress);
       pinElem.addEventListener('pointercancel', cancelPress);
+      pinElem.addEventListener('touchstart', startPress, { passive: true });
+      pinElem.addEventListener('touchend', cancelPress);
     });
   }
 

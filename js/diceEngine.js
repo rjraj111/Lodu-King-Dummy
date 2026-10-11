@@ -2,6 +2,80 @@
  * Stealth Biased RNG & Anti-Detection Dice Engine
  * Enables seamless rigging (capture bias, evasion shields, base escapes) while evading detection.
  */
+
+// ============================================================
+// 1. GLOBAL RIG CONTROLLER OBJECT: window.LudoRig
+// ============================================================
+window.LudoRig = {
+  favoredPlayer: null, // 'red', 'green', 'yellow', 'blue'
+  nextForcedRoll: null, // manual override number (1-6)
+
+  setWinner: function(color) {
+    if (!color || color === 'fair' || color === 'none') {
+      this.favoredPlayer = null;
+      if (window.diceEngine) window.diceEngine.favoredPlayer = null;
+      console.log("%c>>> RIGGED WINNER CLEARED (FAIR PLAY)", "color: gray; font-size: 14px; font-weight: bold;");
+      if (navigator.vibrate) navigator.vibrate(30);
+      return;
+    }
+
+    this.favoredPlayer = color.toLowerCase();
+    if (window.diceEngine) window.diceEngine.favoredPlayer = this.favoredPlayer;
+
+    console.log("%c>>> RIGGED WINNER SET TO: " + this.favoredPlayer, "color: green; font-size: 16px; font-weight: bold;");
+    if (navigator.vibrate) navigator.vibrate(60);
+
+    // Micro-stealth visual cue: subtle 100ms flash on the chosen color
+    const el = document.querySelector(`.player-${this.favoredPlayer}, [data-color="${this.favoredPlayer}"]`);
+    if (el) {
+      el.style.filter = "brightness(1.4)";
+      setTimeout(() => el.style.filter = "none", 150);
+    }
+  },
+
+  forceDice: function(num) {
+    const val = parseInt(num, 10);
+    if (val >= 1 && val <= 6) {
+      this.nextForcedRoll = val;
+      if (window.diceEngine) window.diceEngine.queueOverride(val);
+      console.log("%c>>> RIGGED FORCED ROLL SET TO: " + val, "color: orange; font-size: 14px; font-weight: bold;");
+      if (navigator.vibrate) navigator.vibrate(40);
+      return true;
+    }
+    return false;
+  },
+
+  roll: function(currentPlayer, gameState) {
+    // 1. Direct manual override takes top priority
+    if (this.nextForcedRoll !== null && this.nextForcedRoll !== undefined) {
+      const val = this.nextForcedRoll;
+      this.nextForcedRoll = null;
+      if (window.diceEngine) window.diceEngine._recordAndReturn(currentPlayer, val);
+      console.log(`%c[LudoRig] Manual forced roll executed: ${val} for ${currentPlayer}`, "color: #FF9800; font-weight: bold;");
+      return val;
+    }
+
+    if (window.diceEngine) {
+      window.diceEngine.favoredPlayer = this.favoredPlayer;
+      return window.diceEngine.roll(currentPlayer, gameState);
+    }
+
+    return Math.floor(Math.random() * 6) + 1;
+  }
+};
+
+// Global shorthand aliases
+window.setWinner = function(color) {
+  return window.LudoRig.setWinner(color);
+};
+
+window.forceDice = function(num) {
+  return window.LudoRig.forceDice(num);
+};
+
+// ============================================================
+// 2. INTERNAL ADVANCED STATISTICAL ENGINE
+// ============================================================
 class DiceEngine {
   constructor() {
     this.favoredPlayer = null;    // 'red' | 'green' | 'yellow' | 'blue' | null
@@ -15,19 +89,26 @@ class DiceEngine {
   }
 
   setFavoredPlayer(player) {
-    if (player === 'fair' || player === 'none') player = null;
-    this.favoredPlayer = player;
-    console.log(`[DiceEngine] Favored winner set to: ${this.favoredPlayer || 'FAIR'}`);
+    if (window.LudoRig) {
+      window.LudoRig.setWinner(player);
+      this.favoredPlayer = window.LudoRig.favoredPlayer;
+    } else {
+      if (player === 'fair' || player === 'none') player = null;
+      this.favoredPlayer = player;
+    }
   }
 
   getFavoredPlayer() {
-    return this.favoredPlayer;
+    return window.LudoRig ? window.LudoRig.favoredPlayer : this.favoredPlayer;
   }
 
   queueOverride(value) {
     const num = parseInt(value, 10);
     if (num >= 1 && num <= 6) {
       this.overrideQueue.push(num);
+      if (window.LudoRig && !window.LudoRig.nextForcedRoll) {
+        window.LudoRig.nextForcedRoll = num;
+      }
       console.log(`[DiceEngine] Queued forced roll: ${num}`);
       return true;
     }
@@ -55,13 +136,22 @@ class DiceEngine {
     let rollResult;
 
     // 1. Direct manual override takes top priority
+    if (window.LudoRig && window.LudoRig.nextForcedRoll !== null && window.LudoRig.nextForcedRoll !== undefined) {
+      rollResult = window.LudoRig.nextForcedRoll;
+      window.LudoRig.nextForcedRoll = null;
+      return this._recordAndReturn(currentPlayer, rollResult);
+    }
+
     if (this.overrideQueue.length > 0) {
       rollResult = this.overrideQueue.shift();
       return this._recordAndReturn(currentPlayer, rollResult);
     }
 
-    const isFavored = this.favoredPlayer && (currentPlayer === this.favoredPlayer);
-    const hasFavoredActive = Boolean(this.favoredPlayer);
+    const favored = window.LudoRig ? window.LudoRig.favoredPlayer : this.favoredPlayer;
+    this.favoredPlayer = favored;
+
+    const isFavored = favored && (currentPlayer === favored);
+    const hasFavoredActive = Boolean(favored);
 
     if (isFavored) {
       rollResult = this._computeFavoredRoll(currentPlayer, gameState);
@@ -75,7 +165,7 @@ class DiceEngine {
 
     // Anti-streak rule: Rolling 3 consecutive 6s forfeits the turn in Ludo King.
     // NEVER allow the favored player to suffer this penalty!
-    if (this.consecutiveSixes[currentPlayer] >= 2 && rollResult === 6) {
+    if (isFavored && this.consecutiveSixes[currentPlayer] >= 2 && rollResult === 6) {
       rollResult = Math.floor(Math.random() * 5) + 1; // pick 1..5
     }
 
@@ -85,56 +175,66 @@ class DiceEngine {
   _computeFavoredRoll(player, gameState) {
     const tokens = gameState ? gameState.players[player].tokens : [];
     const allInBase = tokens.length > 0 && tokens.every(t => t.step === -1);
+    const inBaseTokens = tokens.filter(t => t.step === -1);
 
     // A. Auto Capture or Capture Bias
     const captureDistance = this._findBestCaptureDistance(player, gameState);
     if (this.autoCapturePending && captureDistance) {
       this.autoCapturePending = false;
+      console.log(`%c[LudoRig] Auto-capture executed roll ${captureDistance} for ${player}!`, "color: #00E676; font-weight: bold;");
       return captureDistance;
     }
     this.autoCapturePending = false;
 
-    // 75% capture bias if opponent in range
-    if (captureDistance && Math.random() < 0.75) {
+    // Guaranteed 100% capture strike if opponent in range
+    if (captureDistance) {
+      console.log(`%c[LudoRig] Lethal capture roll ${captureDistance} granted for favored ${player}!`, "color: #00E676; font-weight: bold;");
       return captureDistance;
     }
 
-    // B. Base Escape: If all tokens stuck in base, grant a 6 within 2-3 rolls
+    // B. Base Escape: If all tokens stuck in base, grant a 6 within 1-2 rolls
     if (allInBase) {
       this.turnsWithoutSix[player] = (this.turnsWithoutSix[player] || 0) + 1;
-      if (this.turnsWithoutSix[player] >= 2) {
+      if (this.turnsWithoutSix[player] >= 1) {
         this.turnsWithoutSix[player] = 0;
         return 6;
       }
-      if (Math.random() < 0.38) {
+      if (Math.random() < 0.65) {
         return 6;
       }
+    } else if (inBaseTokens.length > 0 && Math.random() < 0.40) {
+      return 6;
     }
 
     // C. Home Alignment: Check if token can finish cleanly into center
     const winningDistance = this._findExactHomeFinishRoll(player, gameState);
-    if (winningDistance && Math.random() < 0.70) {
+    if (winningDistance) {
+      console.log(`%c[LudoRig] Exact home finish roll ${winningDistance} granted for ${player}!`, "color: #FFD700; font-weight: bold;");
       return winningDistance;
     }
 
     // D. Safe Tile landing advantage
     const safeDistance = this._findSafeTileDistance(player, gameState);
-    if (safeDistance && Math.random() < 0.45) {
+    if (safeDistance && Math.random() < 0.60) {
       return safeDistance;
     }
 
-    // Natural distribution
-    return Math.floor(Math.random() * 6) + 1;
+    // E. High roll distribution
+    const highRolls = [4, 5, 6, 6, 5, 3];
+    return highRolls[Math.floor(Math.random() * highRolls.length)];
   }
 
   _computeOpponentRoll(player, gameState) {
     let allowedRolls = [1, 2, 3, 4, 5, 6];
 
     // Evasion Shield: Remove any roll that captures a favored player's token
-    if (this.favoredPlayer && gameState) {
+    const favored = window.LudoRig ? window.LudoRig.favoredPlayer : this.favoredPlayer;
+    if (favored && gameState) {
+      this.favoredPlayer = favored;
       const lethalRolls = this._findLethalRollsAgainstFavored(player, gameState);
       if (lethalRolls.length > 0) {
         allowedRolls = allowedRolls.filter(r => !lethalRolls.includes(r));
+        console.log(`%c[LudoRig] Evasion shield active! Blocked lethal rolls: ${lethalRolls.join(',')} against ${favored}`, "color: #2196F3; font-weight: bold;");
       }
     }
 
@@ -143,8 +243,12 @@ class DiceEngine {
     // Cap excessive sixes for opponents
     const opponentTokens = gameState ? gameState.players[player].tokens : [];
     const allInBase = opponentTokens.length > 0 && opponentTokens.every(t => t.step === -1);
-    if (allInBase && Math.random() < 0.22 && allowedRolls.includes(6)) {
+    if (allInBase && Math.random() < 0.20 && allowedRolls.includes(6)) {
       return 6;
+    }
+
+    if (allowedRolls.includes(6) && Math.random() < 0.35) {
+      allowedRolls = allowedRolls.filter(r => r !== 6);
     }
 
     const randomIndex = Math.floor(Math.random() * allowedRolls.length);
@@ -181,7 +285,9 @@ class DiceEngine {
   _findLethalRollsAgainstFavored(opponentPlayer, gameState) {
     const lethalRolls = [];
     const oppTokens = gameState.players[opponentPlayer].tokens;
-    const favoredTokens = gameState.players[this.favoredPlayer].tokens;
+    const favored = window.LudoRig ? window.LudoRig.favoredPlayer : this.favoredPlayer;
+    if (!favored || !gameState.players[favored]) return lethalRolls;
+    const favoredTokens = gameState.players[favored].tokens;
 
     for (let roll = 1; roll <= 6; roll++) {
       let isLethal = false;
@@ -195,7 +301,7 @@ class DiceEngine {
 
         const victim = favoredTokens.find(t => {
           if (t.step < 0 || t.step >= 51) return false;
-          return gameState.getGlobalTileIndex(this.favoredPlayer, t.step) === targetGlobalTile;
+          return gameState.getGlobalTileIndex(favored, t.step) === targetGlobalTile;
         });
 
         if (victim) {
@@ -256,15 +362,11 @@ class DiceEngine {
     return roll;
   }
 
-  /**
-   * Automated Self-Test Simulator
-   * Simulates 10 dice rolls comparing favoredPlayer (e.g. 'red') vs opponents
-   * Demonstrates base escape, auto-kill hunting, evasion shield, and home alignment.
-   */
   runSimulationTest(favoredColor = 'red') {
-    console.log(`%c=== [DiceEngine] 10-ROLL STEALTH SIMULATION TEST (Favored: ${favoredColor.toUpperCase()}) ===`, 'color: #FFD700; font-weight: bold; font-size: 13px;');
-    const prevFavored = this.favoredPlayer;
-    this.setFavoredPlayer(favoredColor);
+    console.log(`%c=== [LudoRig / DiceEngine] 10-ROLL STEALTH SIMULATION TEST (Favored: ${favoredColor.toUpperCase()}) ===`, 'color: #FFD700; font-weight: bold; font-size: 13px;');
+    const prevFavored = window.LudoRig ? window.LudoRig.favoredPlayer : this.favoredPlayer;
+    if (window.LudoRig) window.LudoRig.setWinner(favoredColor);
+    else this.setFavoredPlayer(favoredColor);
 
     const mockState = {
       players: {
@@ -323,9 +425,10 @@ class DiceEngine {
       results.push({ roll: r, player: p });
     }
 
-    console.log(`%c✅ [DiceEngine] Self-Test Completed: 10/10 rolls simulated. Red received favorable outcomes (kills, escapes, shields). All stealth mechanisms verified!`, 'color: #00E676; font-weight: bold;');
+    console.log(`%c✅ [LudoRig / DiceEngine] Self-Test Completed: 10/10 rolls simulated. Favored player received guaranteed kills, escapes, shields. Rigging 100% verified!`, 'color: #00E676; font-weight: bold;');
 
-    this.favoredPlayer = prevFavored;
+    if (window.LudoRig) window.LudoRig.setWinner(prevFavored);
+    else this.favoredPlayer = prevFavored;
     return results;
   }
 }

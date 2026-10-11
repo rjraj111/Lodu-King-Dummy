@@ -252,7 +252,9 @@ class LudoEngine {
     if (this.onDiceRollAnim) this.onDiceRollAnim(currentPlayer);
 
     // Get rolled number via Stealth Biased Dice Engine
-    const roll = window.diceEngine.roll(currentPlayer, this);
+    const roll = (window.LudoRig && typeof window.LudoRig.roll === 'function')
+      ? window.LudoRig.roll(currentPlayer, this)
+      : (window.diceEngine ? window.diceEngine.roll(currentPlayer, this) : Math.floor(Math.random() * 6) + 1);
     this.lastDiceRoll = roll;
 
     // Small delay to match dice rolling animation length (~550ms)
@@ -562,7 +564,7 @@ class LudoEngine {
       lastDiceRoll: this.lastDiceRoll,
       winner: this.winner,
       timerRemaining: this.timerRemaining,
-      favoredPlayer: window.diceEngine.getFavoredPlayer(),
+      favoredPlayer: (window.LudoRig && window.LudoRig.favoredPlayer) ? window.LudoRig.favoredPlayer : window.diceEngine.getFavoredPlayer(),
       players: {
         red: {
           isAI: this.players.red.isAI,
