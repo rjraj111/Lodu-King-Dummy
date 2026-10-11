@@ -9,8 +9,8 @@ android {
         applicationId "com.vinaykpro.ludoking"
         minSdk 21
         targetSdk 33
-        versionCode 1562
-        versionName "8.0.0.278"
+        versionCode 1563
+        versionName "8.0.0.279"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

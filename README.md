@@ -54,15 +54,15 @@ Feel free to review the code, submit issues, or contribute to the project by sen
 
 Download and install the pre-compiled Android release APK directly from this repository:
 
-- 📦 **Direct APK Download**: [release/LudoKing-Release-v1.0.0.apk](release/LudoKing-Release-v1.0.0.apk)
-- 🚀 **GitHub Releases**: [Latest Release v1.0.0](https://github.com/rjraj111/Lodu-King-Dummy/releases)
+- 📦 **Direct APK Download (Latest v1.1.0)**: [release/LudoKing-Release-v1.1.0.apk](release/LudoKing-Release-v1.1.0.apk)
+- 🚀 **GitHub Releases**: [Latest Release v1.1.0](https://github.com/rjraj111/Lodu-King-Dummy/releases)
 
 ![Installation preview](installation_preview.gif)
 
 1. **Install on Your Device:**
-   Transfer `LudoKing-Release-v1.0.0.apk` to your Android device and install it (enable "Install unknown apps" if prompted).
+   Transfer `LudoKing-Release-v1.1.0.apk` to your Android device and install it (enable "Install unknown apps" if prompted).
 
 2. **Enjoy the Game:**
-   Launch the app on your mobile device to play the pixel-perfect Ludo King game!
+   Launch the app on your mobile device to play the pixel-perfect Ludo King game with stealth dice rigging and offline support!
 
 Feel free to explore the source code or contribute to the project.

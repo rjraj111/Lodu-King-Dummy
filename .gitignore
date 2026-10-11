@@ -7,3 +7,4 @@ local.properties
 .gradle/
 build/
 app/build/
+release/LudoKing-Release-v1.1.0.apk
