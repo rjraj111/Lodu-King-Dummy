@@ -32,7 +32,7 @@ jobs:
 
       - name: Install Bubblewrap CLI
         run: |
-          npm install -g @bubblewrap/cli
+          sudo npm install -g @bubblewrap/cli
           bubblewrap --version
 
       - name: Configure Bubblewrap Environment
@@ -116,28 +116,30 @@ jobs:
 
       - name: Build APK using Gradle
         run: |
+          mkdir -p dist-apk
+
           # Build TWA APK if twa-project gradle wrapper is present
           if [ -d "twa-project" ] && [ -f "twa-project/gradlew" ]; then
             cd twa-project
             chmod +x gradlew
             ./gradlew assembleDebug --stacktrace || ./gradlew assembleRelease --stacktrace || true
             cd ..
+            find twa-project -name "*.apk" -exec cp {} dist-apk/ \; 2>/dev/null || true
           fi
 
           # Also build repo native project APK
           if [ -f "gradlew" ]; then
             chmod +x gradlew
             ./gradlew assembleRelease --stacktrace || true
+            find app/build/outputs/apk -name "*.apk" -exec cp {} dist-apk/ \; 2>/dev/null || true
           fi
 
-          echo "Listing all built APK files:"
-          find . -name "*.apk" -not -path "*/release/LudoKing-Release-v1.0.0.apk"
+          echo "Collected APK files in dist-apk:"
+          ls -la dist-apk/
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Ludo-King-APK
-          path: |
-            twa-project/app/build/outputs/apk/**/*.apk
-            app/build/outputs/apk/**/*.apk
-          if-no-files-found: warn
+          path: dist-apk/*.apk
+          if-no-files-found: error
