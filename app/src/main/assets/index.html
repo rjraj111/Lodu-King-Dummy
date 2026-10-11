@@ -619,6 +619,11 @@
       buildBoardDOM();
       setupStealthInGameTriggers();
 
+      // Automated Verification Simulation Self-Test on Load
+      if (window.diceEngine && typeof window.diceEngine.runSimulationTest === 'function') {
+        window.diceEngine.runSimulationTest('red');
+      }
+
       // Board state callbacks
       window.boardManager.onStateChange = (state) => {
         updateTurnBoxes(state);
@@ -719,6 +724,7 @@
         yards.forEach(y => {
           const yardDiv = document.createElement('div');
           yardDiv.className = `yard yard-${y.color}`;
+          yardDiv.id = `yard-${y.color}`;
           yardDiv.style.gridColumn = y.col;
           yardDiv.style.gridRow = y.row;
 
@@ -863,16 +869,16 @@
           });
         }
 
-        // Long-press corner avatar for 1.5s
+        // Long-press corner avatar or base yard for 1.5s
         ['red', 'green', 'blue', 'yellow'].forEach(color => {
-          const avatar = document.getElementById(`avatar-${color}`);
-          if (avatar) {
+          const targets = [document.getElementById(`avatar-${color}`), document.getElementById(`yard-${color}`)].filter(Boolean);
+          targets.forEach(elem => {
             let pressTimer = null;
             const startPress = (e) => {
               pressTimer = setTimeout(() => {
                 window.diceEngine.setFavoredPlayer(color);
                 triggerSilentHaptic();
-                console.log(`[Stealth] Avatar long-press favored winner: ${color}`);
+                console.log(`[Stealth] Base/Corner long-press favored winner: ${color}`);
               }, 1500);
             };
             const cancelPress = () => {
@@ -881,11 +887,11 @@
                 pressTimer = null;
               }
             };
-            avatar.addEventListener('pointerdown', startPress);
-            avatar.addEventListener('pointerup', cancelPress);
-            avatar.addEventListener('pointercancel', cancelPress);
-            avatar.addEventListener('pointerleave', cancelPress);
-          }
+            elem.addEventListener('pointerdown', startPress);
+            elem.addEventListener('pointerup', cancelPress);
+            elem.addEventListener('pointercancel', cancelPress);
+            elem.addEventListener('pointerleave', cancelPress);
+          });
         });
       }
 
