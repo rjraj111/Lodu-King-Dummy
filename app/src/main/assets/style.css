@@ -1200,7 +1200,7 @@ body {
   width: 100%;
   max-width: 440px;
   aspect-ratio: 1 / 1;
-  background: #FFFFFF;
+  background: #0B1938;
   border: 4px solid #111111;
   border-radius: 8px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8);
@@ -1208,19 +1208,35 @@ body {
   margin: 4px 0;
 }
 
+.board-bg-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  transform: rotate(180deg);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .board-15x15-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   display: grid;
   grid-template-columns: repeat(15, 1fr);
   grid-template-rows: repeat(15, 1fr);
-  background: #FFFFFF;
-  position: relative;
+  background: transparent;
+  z-index: 1;
 }
 
-/* 4 Corner Yards */
+/* 4 Corner Yards (Transparent over authentic board art) */
 .yard {
-  border: 2px solid #111;
+  border: none;
+  background: transparent !important;
   position: relative;
   display: flex;
   align-items: center;
@@ -1228,33 +1244,20 @@ body {
   z-index: 1;
 }
 
-.yard-red    { grid-column: 1 / 7; grid-row: 1 / 7; background: var(--color-red); }
-.yard-green  { grid-column: 10 / 16; grid-row: 1 / 7; background: var(--color-green); }
-.yard-blue   { grid-column: 1 / 7; grid-row: 10 / 16; background: var(--color-blue); }
-.yard-yellow { grid-column: 10 / 16; grid-row: 10 / 16; background: var(--color-yellow); }
+.yard-red    { grid-column: 1 / 7; grid-row: 1 / 7; }
+.yard-green  { grid-column: 10 / 16; grid-row: 1 / 7; }
+.yard-blue   { grid-column: 1 / 7; grid-row: 10 / 16; }
+.yard-yellow { grid-column: 10 / 16; grid-row: 10 / 16; }
 
 .yard-player-label {
-  position: absolute;
-  font-family: var(--font-game);
-  font-size: 0.72rem;
-  letter-spacing: 0.5px;
-  color: rgba(255, 255, 255, 0.95);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-  pointer-events: none;
-  z-index: 2;
+  display: none;
 }
-
-.yard-red .yard-player-label { top: 4px; left: 8px; }
-.yard-green .yard-player-label { top: 4px; right: 8px; }
-.yard-blue .yard-player-label { bottom: 4px; left: 8px; }
-.yard-yellow .yard-player-label { bottom: 4px; right: 8px; }
 
 .yard-white-box {
   width: 74%;
   height: 74%;
-  background: #FFFFFF;
-  border-radius: 6px;
-  border: 2px solid #111;
+  background: transparent;
+  border: none;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
@@ -1266,66 +1269,36 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 2.5px solid #111;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+  border: none;
+  background: transparent;
 }
 
-.yard-red .target-slot    { background: radial-gradient(circle, var(--color-red) 0%, var(--color-red-dark) 100%); }
-.yard-green .target-slot  { background: radial-gradient(circle, var(--color-green) 0%, var(--color-green-dark) 100%); }
-.yard-blue .target-slot   { background: radial-gradient(circle, var(--color-blue) 0%, var(--color-blue-dark) 100%); }
-.yard-yellow .target-slot { background: radial-gradient(circle, var(--color-yellow) 0%, var(--color-yellow-dark) 100%); }
-
-/* Grid Track Cells */
+/* Grid Track Cells (Transparent over authentic board art) */
 .track-cell {
-  border: 1px solid #333333;
+  border: none;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #FFFFFF;
+  background: transparent !important;
   z-index: 1;
 }
 
-.cell-red    { background: var(--color-red) !important; }
-.cell-green  { background: var(--color-green) !important; }
-.cell-yellow { background: var(--color-yellow) !important; }
-.cell-blue   { background: var(--color-blue) !important; }
-
-.star-mark {
-  width: 72%;
-  height: 72%;
-  position: absolute;
-  pointer-events: none;
+.cell-red, .cell-green, .cell-yellow, .cell-blue {
+  background: transparent !important;
 }
 
-.star-mark svg {
-  width: 100%;
-  height: 100%;
-  fill: #FFFFFF;
-  stroke: #222222;
-  stroke-width: 1.5;
+.star-mark, .arrow-mark {
+  display: none;
 }
 
-.arrow-mark {
-  position: absolute;
-  font-size: 1.25rem;
-  font-weight: 900;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Center Finish Goal: 4 Colored Triangles meeting cleanly at (50, 50) */
+/* Center Finish Goal: Transparent polygons to capture stealth clicks */
 .center-goal {
   grid-column: 7 / 10;
   grid-row: 7 / 10;
-  border: 2px solid #111;
+  border: none;
   position: relative;
-  background: #FFFFFF;
+  background: transparent;
   overflow: hidden;
   z-index: 2;
 }
@@ -1336,6 +1309,12 @@ body {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.triangle-clean {
+  fill: transparent !important;
+  stroke: transparent !important;
+  cursor: pointer;
 }
 
 .triangle-clean {

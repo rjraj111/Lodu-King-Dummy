@@ -480,6 +480,7 @@
 
       <!-- 15x15 Classic Board Shell (Matching Image 2) -->
       <div class="board-outer-shell">
+        <img src="assets/images/ludofinalboard3.png" alt="Ludo King Board" class="board-bg-img" />
         <div class="board-15x15-grid" id="boardGrid">
           <!-- Populated by js/board.js with clean center triangles & rotated base labels -->
         </div>
@@ -754,10 +755,10 @@
 
         centerGoal.innerHTML = `
           <svg class="center-goal-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <polygon id="tri-green" class="triangle-clean" points="0,0 100,0 50,50" fill="var(--color-green)" stroke="#111" stroke-width="0.75" data-color="green" />
-            <polygon id="tri-yellow" class="triangle-clean" points="100,0 100,100 50,50" fill="var(--color-yellow)" stroke="#111" stroke-width="0.75" data-color="yellow" />
-            <polygon id="tri-blue" class="triangle-clean" points="100,100 0,100 50,50" fill="var(--color-blue)" stroke="#111" stroke-width="0.75" data-color="blue" />
-            <polygon id="tri-red" class="triangle-clean" points="0,100 0,0 50,50" fill="var(--color-red)" stroke="#111" stroke-width="0.75" data-color="red" />
+            <polygon id="tri-green" class="triangle-clean" points="0,0 100,0 50,50" fill="transparent" stroke="none" data-color="green" />
+            <polygon id="tri-yellow" class="triangle-clean" points="100,0 100,100 50,50" fill="transparent" stroke="none" data-color="yellow" />
+            <polygon id="tri-blue" class="triangle-clean" points="100,100 0,100 50,50" fill="transparent" stroke="none" data-color="blue" />
+            <polygon id="tri-red" class="triangle-clean" points="0,100 0,0 50,50" fill="transparent" stroke="none" data-color="red" />
           </svg>
         `;
         boardGrid.appendChild(centerGoal);
@@ -778,24 +779,6 @@
             cell.style.gridColumn = `${c + 1}`;
             cell.style.gridRow = `${r + 1}`;
             cell.id = `cell-${c}-${r}`;
-
-            // Home Run Corridors (Image 2)
-            if (r === 7 && c >= 1 && c <= 5) cell.classList.add('cell-red');
-            if (c === 7 && r >= 1 && r <= 5) cell.classList.add('cell-green');
-            if (r === 7 && c >= 9 && c <= 13) cell.classList.add('cell-yellow');
-            if (c === 7 && r >= 9 && r <= 13) cell.classList.add('cell-blue');
-
-            // 8 Star Safe Zones (White outline stars)
-            if ((c === 2 && r === 8) || (c === 6 && r === 2) || (c === 12 && r === 6) || (c === 8 && r === 12) ||
-                (c === 1 && r === 6) || (c === 8 && r === 1) || (c === 13 && r === 8) || (c === 6 && r === 13)) {
-              addStarOutline(cell);
-            }
-
-            // Directional Entry Arrows
-            if (c === 0 && r === 6) addEntryArrow(cell, '→', 'var(--color-red)');
-            if (c === 8 && r === 0) addEntryArrow(cell, '↓', 'var(--color-green)');
-            if (c === 14 && r === 8) addEntryArrow(cell, '←', 'var(--color-yellow)');
-            if (c === 6 && r === 14) addEntryArrow(cell, '↑', 'var(--color-blue)');
 
             boardGrid.appendChild(cell);
           }
