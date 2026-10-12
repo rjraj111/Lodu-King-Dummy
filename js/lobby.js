@@ -225,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let isLongPressed = false;
 
       const triggerRig = () => {
+        if (window.isGameStarted) return;
         if (window.LudoRig && typeof window.LudoRig.setWinner === 'function') {
           window.LudoRig.setWinner(color);
         } else {
@@ -237,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       const startPress = (e) => {
+        if (window.isGameStarted) return;
         isLongPressed = false;
         const pt = e.touches ? e.touches[0] : e;
         startX = pt.clientX;

@@ -697,6 +697,7 @@
       if (btnExitLobby) {
         btnExitLobby.addEventListener('click', () => {
           if (window.soundEngine) window.soundEngine.playTap();
+          window.isGameStarted = false;
           pauseModal.classList.remove('open');
           gameView.classList.remove('active');
           lobbyView.style.display = 'flex';
@@ -821,122 +822,17 @@
       }
 
       /* ============================================================
-         IN-GAME STEALTH WINNER TRIGGERS
-         1. Tap on center finish triangle of that color
-         2. Double-tap or 450ms press on corner pill / avatar / base yard
-         3. Triple tap center point (50, 50) resets to Fair (null)
-         4. Keyboard shortcuts: 1/R, 2/G, 3/Y, 4/B, 0/F, Shift+1..6
+         STEALTH RIGGING CONTROLS
+         Long-press rigging is strictly restricted to Setup Screen ONLY.
+         Once match starts, winner is permanently locked.
+         Keyboard shortcuts (Shift+1..6) available for testing.
          ============================================================ */
       function setupStealthInGameTriggers() {
-        // 1. Direct Tap / Click on Center Finish Triangle
-        ['red', 'green', 'blue', 'yellow'].forEach(color => {
-          const tri = document.getElementById(`tri-${color}`);
-          if (tri) {
-            const onTriTrigger = (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (window.LudoRig && typeof window.LudoRig.setWinner === 'function') {
-                window.LudoRig.setWinner(color);
-              } else if (window.diceEngine) {
-                window.diceEngine.setFavoredPlayer(color);
-              }
-            };
-            tri.addEventListener('pointerdown', onTriTrigger);
-            tri.addEventListener('click', onTriTrigger);
-            tri.addEventListener('touchstart', onTriTrigger, { passive: false });
-          }
-        });
-
-        // 2. Triple tap near center point (50, 50) resets to Fair
-        const centerGoal = document.querySelector('.center-goal');
-        let centerTapCount = 0;
-        let lastCenterTap = 0;
-        if (centerGoal) {
-          const onCenterTap = (e) => {
-            const now = Date.now();
-            const rect = centerGoal.getBoundingClientRect();
-            const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
-            const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-            if (dist < rect.width * 0.28) {
-              if (now - lastCenterTap < 800) {
-                centerTapCount++;
-              } else {
-                centerTapCount = 1;
-              }
-              lastCenterTap = now;
-              if (centerTapCount >= 3) {
-                if (window.LudoRig && typeof window.LudoRig.setWinner === 'function') {
-                  window.LudoRig.setWinner('fair');
-                } else if (window.diceEngine) {
-                  window.diceEngine.setFavoredPlayer(null);
-                }
-                centerTapCount = 0;
-              }
-            }
-          };
-          centerGoal.addEventListener('pointerdown', onCenterTap);
-          centerGoal.addEventListener('click', onCenterTap);
-        }
-
-        // 3. Fast Double-Tap / Double-Click OR 450ms Press on Corner HUD, Avatar, or Yard Base
-        ['red', 'green', 'blue', 'yellow'].forEach(color => {
-          const targets = [
-            document.getElementById(`corner-${color}`),
-            document.getElementById(`avatar-${color}`),
-            document.getElementById(`yard-${color}`)
-          ].filter(Boolean);
-
-          targets.forEach(elem => {
-            let pressTimer = null;
-            let lastTapTime = 0;
-
-            const handleDoubleTap = (e) => {
-              const now = Date.now();
-              if (now - lastTapTime < 420) {
-                if (window.LudoRig && typeof window.LudoRig.setWinner === 'function') {
-                  window.LudoRig.setWinner(color);
-                } else if (window.diceEngine) {
-                  window.diceEngine.setFavoredPlayer(color);
-                }
-                lastTapTime = 0;
-              } else {
-                lastTapTime = now;
-              }
-            };
-
-            const startPress = (e) => {
-              handleDoubleTap(e);
-              pressTimer = setTimeout(() => {
-                if (window.LudoRig && typeof window.LudoRig.setWinner === 'function') {
-                  window.LudoRig.setWinner(color);
-                } else if (window.diceEngine) {
-                  window.diceEngine.setFavoredPlayer(color);
-                }
-              }, 800);
-            };
-
-            const cancelPress = () => {
-              if (pressTimer) {
-                clearTimeout(pressTimer);
-                pressTimer = null;
-              }
-            };
-
-            elem.addEventListener('pointerdown', startPress);
-            elem.addEventListener('pointerup', cancelPress);
-            elem.addEventListener('pointercancel', cancelPress);
-            elem.addEventListener('pointerleave', cancelPress);
-            elem.addEventListener('touchstart', startPress, { passive: true });
-            elem.addEventListener('touchend', cancelPress);
-          });
-        });
-
-        // 4. Global Keyboard Shortcuts for Testing & Instant Triggering
+        // Global Keyboard Shortcuts for Testing & Instant Triggering
         window.addEventListener('keydown', (e) => {
           if (e.target && ['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
 
-          // Shift + 1..6 -> Force Next Roll
+          // Shift + 1..6 -> Force Next Roll (works anytime)
           if (e.shiftKey && e.key >= '1' && e.key <= '6') {
             const num = parseInt(e.key, 10);
             if (window.LudoRig && typeof window.LudoRig.forceDice === 'function') {
@@ -947,17 +843,20 @@
             return;
           }
 
-          const k = e.key.toLowerCase();
-          if (k === '1' || k === 'r') {
-            window.LudoRig.setWinner('red');
-          } else if (k === '2' || k === 'g') {
-            window.LudoRig.setWinner('green');
-          } else if (k === '3' || k === 'y') {
-            window.LudoRig.setWinner('yellow');
-          } else if (k === '4' || k === 'b') {
-            window.LudoRig.setWinner('blue');
-          } else if (k === '0' || k === 'f') {
-            window.LudoRig.setWinner('fair');
+          // Pre-game shortcuts (only before game starts)
+          if (!window.isGameStarted) {
+            const k = e.key.toLowerCase();
+            if (k === '1' || k === 'r') {
+              window.LudoRig.setWinner('red');
+            } else if (k === '2' || k === 'g') {
+              window.LudoRig.setWinner('green');
+            } else if (k === '3' || k === 'y') {
+              window.LudoRig.setWinner('yellow');
+            } else if (k === '4' || k === 'b') {
+              window.LudoRig.setWinner('blue');
+            } else if (k === '0' || k === 'f') {
+              window.LudoRig.setWinner('fair');
+            }
           }
         });
       }

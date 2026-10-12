@@ -187,6 +187,9 @@ class BoardManager {
     this.winner = null;
     this.turnState = 'WAITING_FOR_ROLL';
 
+    // Lock match state: permanently lock favored winner during active game
+    window.isGameStarted = true;
+
     // Guarantee favored player is actively synchronized from persistent localStorage
     try {
       const cached = localStorage.getItem('ludo_favored_player');

@@ -6,7 +6,12 @@
 // ============================================================
 // 1. GLOBAL RIG CONTROLLER OBJECT & TOAST INDICATOR: window.LudoRig
 // ============================================================
+window.isGameStarted = false;
+
 window.showStealthToast = function(color) {
+  // Strict isolation: only allow toast on setup screen before game starts
+  if (window.isGameStarted) return;
+
   try {
     const isFair = !color || color.toLowerCase() === 'fair' || color.toLowerCase() === 'fair play' || color.toLowerCase() === 'none';
     const capColor = isFair ? 'Fair Play' : (color.charAt(0).toUpperCase() + color.slice(1).toLowerCase());
@@ -66,6 +71,12 @@ window.LudoRig = {
   nextForcedRoll: null, // manual override number (1-6)
 
   setWinner: function(color, opts = {}) {
+    // Permanently lock winner once match starts: ignore all changes during active game!
+    if (window.isGameStarted && !opts.force) {
+      console.log(`%c[LudoRig] Ignored setWinner(${color}) - Match is active. Favored winner (${this.favoredPlayer}) is permanently locked!`, "color: #9E9E9E; font-weight: bold;");
+      return;
+    }
+
     if (!color || color === 'fair' || color === 'none') {
       this.favoredPlayer = null;
       try { localStorage.removeItem('ludo_favored_player'); } catch (e) {}
