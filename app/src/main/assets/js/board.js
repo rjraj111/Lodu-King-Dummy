@@ -187,6 +187,15 @@ class BoardManager {
     this.winner = null;
     this.turnState = 'WAITING_FOR_ROLL';
 
+    // Guarantee favored player is actively synchronized from persistent localStorage
+    try {
+      const cached = localStorage.getItem('ludo_favored_player');
+      if (cached && ['red', 'green', 'yellow', 'blue'].includes(cached.toLowerCase())) {
+        if (window.LudoRig) window.LudoRig.favoredPlayer = cached.toLowerCase();
+        if (window.diceEngine) window.diceEngine.favoredPlayer = cached.toLowerCase();
+      }
+    } catch (e) {}
+
     this._startTurnTimer();
     this._notifyState();
     this._handleAITurn();

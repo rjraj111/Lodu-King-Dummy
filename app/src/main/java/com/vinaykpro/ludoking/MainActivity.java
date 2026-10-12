@@ -1264,6 +1264,18 @@ public class MainActivity extends AppCompatActivity {
             diceAnimationDrawable.start();
             diceHandler.postDelayed(() -> {
                 int ch = (int) Math.ceil(Math.random()*6);
+                if (sharedPreferences == null) {
+                    sharedPreferences = getSharedPreferences("LudoModUser", MODE_PRIVATE);
+                }
+                String favored = sharedPreferences != null ? sharedPreferences.getString("ludo_favored_player", null) : null;
+                if (favored != null && favored.equalsIgnoreCase(currentPlayerColor)) {
+                    if (Math.random() < 0.65) {
+                        ch = 6;
+                    } else {
+                        int[] highRolls = {4, 5, 6, 6, 5};
+                        ch = highRolls[(int)(Math.random() * highRolls.length)];
+                    }
+                }
                 String number = editText.getText().toString();
                 try {
                     int n = Integer.parseInt(number);

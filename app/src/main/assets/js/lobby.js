@@ -191,9 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const activeConfigs = colorConfigs.slice(0, Math.min(count, 4));
 
     slotsCard.innerHTML = activeConfigs.map((cfg, idx) => `
-      <div class="player-slot-row">
-        <div class="slot-pin-avatar stealth-pin-trigger" data-color="${cfg.color}" title="Hold to secretly rig winner" style="cursor: pointer; display: flex; align-items: center; justify-content: center;">
-          <img src="assets/images/${cfg.color}piece.png" alt="${cfg.color}" style="width: 32px; height: 38px; object-fit: contain; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.5));" />
+      <div class="player-slot-row" data-color="${cfg.color}">
+        <div class="slot-pin-avatar stealth-pin-trigger" data-color="${cfg.color}" title="Hold 800ms to rig winner" style="cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-user-select: none; user-select: none; touch-action: manipulation;">
+          <img src="assets/images/${cfg.color}piece.png" alt="${cfg.color}" style="width: 32px; height: 38px; object-fit: contain; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.5)); pointer-events: none;" />
         </div>
         <input type="text" class="slot-name-input" id="inputName-${cfg.color}" value="${cfg.defaultName}" maxlength="12" />
         <div class="slot-dice-preview">
@@ -207,56 +207,85 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ============================================================
   // 5. STEALTH WINNER RIGGING ON SETUP SCREEN
-  // Long-pressing (1.5s) on ANY player's pin icon secretly arms Guaranteed Winner!
-  // Silent physical haptic feedback (navigator.vibrate(30)) with ZERO visual hint!
+  // Long-pressing (holds for 800ms) on ANY player's pin or avatar secretly arms Guaranteed Winner!
+  // Displays sleek on-screen toast confirmation: "✓ [Color] Ready" (fades after 1.5s),
+  // physical haptic vibration (50ms), and state persistence via localStorage!
   // ============================================================
   function attachStealthPinRigging() {
-    document.querySelectorAll('.stealth-pin-trigger').forEach(pinElem => {
-      const color = pinElem.dataset.color;
+    const targets = document.querySelectorAll('#modalChooseColor .stealth-pin-trigger, #modalChooseColor .slot-pin-avatar, #modalChooseColor .player-slot-row');
+
+    targets.forEach(elem => {
+      const color = elem.dataset.color || elem.closest('[data-color]')?.dataset.color;
+      if (!color) return;
+
       let pressTimer = null;
+      let startX = 0;
+      let startY = 0;
       let lastTap = 0;
+      let isLongPressed = false;
 
       const triggerRig = () => {
         if (window.LudoRig && typeof window.LudoRig.setWinner === 'function') {
           window.LudoRig.setWinner(color);
-        } else if (window.diceEngine) {
-          window.diceEngine.setFavoredPlayer(color);
+        } else {
+          try { localStorage.setItem('ludo_favored_player', color.toLowerCase()); } catch (e) {}
+          if (window.diceEngine) window.diceEngine.setFavoredPlayer(color);
+          if (navigator.vibrate) try { navigator.vibrate(50); } catch (e) {}
+          if (window.showStealthToast) window.showStealthToast(color);
         }
-        if (window.AndroidNative && window.AndroidNative.triggerHaptic) {
-          window.AndroidNative.triggerHaptic(60);
-        } else if (navigator.vibrate) {
-          navigator.vibrate(60);
-        }
-        console.log(`[Stealth] Rig armed from Setup screen: ${color.toUpperCase()} is Favored Winner!`);
+        console.log(`[Stealth] Rig confirmed from Setup screen (800ms hold): ${color.toUpperCase()} Ready!`);
       };
 
       const startPress = (e) => {
+        isLongPressed = false;
+        const pt = e.touches ? e.touches[0] : e;
+        startX = pt.clientX;
+        startY = pt.clientY;
+
+        // Double-tap shortcut fallback (<350ms)
         const now = Date.now();
-        if (now - lastTap < 400) {
+        if (now - lastTap < 350) {
           triggerRig();
           lastTap = 0;
           return;
         }
         lastTap = now;
 
+        // Exactly 800ms long-press hold requirement
         pressTimer = setTimeout(() => {
+          isLongPressed = true;
           triggerRig();
-        }, 450);
+        }, 800);
       };
 
-      const cancelPress = () => {
-        if (pressTimer) {
+      const movePress = (e) => {
+        if (!pressTimer) return;
+        const pt = e.touches ? e.touches[0] : e;
+        if (Math.hypot(pt.clientX - startX, pt.clientY - startY) > 14) {
           clearTimeout(pressTimer);
           pressTimer = null;
         }
       };
 
-      pinElem.addEventListener('pointerdown', startPress);
-      pinElem.addEventListener('pointerup', cancelPress);
-      pinElem.addEventListener('pointerleave', cancelPress);
-      pinElem.addEventListener('pointercancel', cancelPress);
-      pinElem.addEventListener('touchstart', startPress, { passive: true });
-      pinElem.addEventListener('touchend', cancelPress);
+      const cancelPress = (e) => {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+        if (isLongPressed && e && e.cancelable) {
+          e.preventDefault();
+        }
+      };
+
+      elem.addEventListener('pointerdown', startPress);
+      elem.addEventListener('pointermove', movePress);
+      elem.addEventListener('pointerup', cancelPress);
+      elem.addEventListener('pointerleave', cancelPress);
+      elem.addEventListener('pointercancel', cancelPress);
+      elem.addEventListener('touchstart', startPress, { passive: true });
+      elem.addEventListener('touchmove', movePress, { passive: true });
+      elem.addEventListener('touchend', cancelPress);
+      elem.addEventListener('touchcancel', cancelPress);
     });
   }
 

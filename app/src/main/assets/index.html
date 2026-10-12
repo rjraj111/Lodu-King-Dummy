@@ -913,7 +913,7 @@
                 } else if (window.diceEngine) {
                   window.diceEngine.setFavoredPlayer(color);
                 }
-              }, 450);
+              }, 800);
             };
 
             const cancelPress = () => {
@@ -964,9 +964,9 @@
 
       function triggerSilentHaptic() {
         if (window.AndroidNative && window.AndroidNative.triggerHaptic) {
-          window.AndroidNative.triggerHaptic(30);
+          window.AndroidNative.triggerHaptic(50);
         } else if (navigator.vibrate) {
-          navigator.vibrate(30);
+          navigator.vibrate(50);
         }
       }
 

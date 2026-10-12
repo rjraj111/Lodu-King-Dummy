@@ -4,34 +4,108 @@
  */
 
 // ============================================================
-// 1. GLOBAL RIG CONTROLLER OBJECT: window.LudoRig
+// 1. GLOBAL RIG CONTROLLER OBJECT & TOAST INDICATOR: window.LudoRig
 // ============================================================
+window.showStealthToast = function(color) {
+  try {
+    const isFair = !color || color.toLowerCase() === 'fair' || color.toLowerCase() === 'fair play' || color.toLowerCase() === 'none';
+    const capColor = isFair ? 'Fair Play' : (color.charAt(0).toUpperCase() + color.slice(1).toLowerCase());
+
+    let toast = document.getElementById('stealthToastIndicator');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'stealthToastIndicator';
+      document.body.appendChild(toast);
+    }
+
+    toast.innerHTML = `<span style="color: #00E676; font-weight: 800; font-size: 15px; margin-right: 7px; display: inline-flex; align-items: center;">✓</span><span style="font-weight: 600;">${capColor} Ready</span>`;
+
+    // Sleek dark rounded pill, white text, subtle green checkmark, high z-index (99999)
+    Object.assign(toast.style, {
+      position: 'fixed',
+      bottom: '36px',
+      left: '50%',
+      transform: 'translateX(-50%) translateY(0)',
+      backgroundColor: 'rgba(15, 23, 42, 0.94)',
+      backdropFilter: 'blur(8px)',
+      webkitBackdropFilter: 'blur(8px)',
+      color: '#FFFFFF',
+      padding: '9px 22px',
+      borderRadius: '50px',
+      fontSize: '13.5px',
+      letterSpacing: '0.4px',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12)',
+      zIndex: '99999',
+      pointerEvents: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      opacity: '1',
+      transition: 'opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
+    });
+
+    if (window._stealthToastTimer) {
+      clearTimeout(window._stealthToastTimer);
+    }
+
+    // Auto-fades out smoothly after 1.5 seconds
+    window._stealthToastTimer = setTimeout(() => {
+      if (toast) {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(8px)';
+      }
+    }, 1500);
+  } catch (err) {
+    console.warn('[showStealthToast] Error:', err);
+  }
+};
+
 window.LudoRig = {
   favoredPlayer: null, // 'red', 'green', 'yellow', 'blue'
   nextForcedRoll: null, // manual override number (1-6)
 
-  setWinner: function(color) {
+  setWinner: function(color, opts = {}) {
     if (!color || color === 'fair' || color === 'none') {
       this.favoredPlayer = null;
       try { localStorage.removeItem('ludo_favored_player'); } catch (e) {}
       if (window.diceEngine) window.diceEngine.favoredPlayer = null;
       console.log("%c>>> RIGGED WINNER CLEARED (FAIR PLAY)", "color: gray; font-size: 14px; font-weight: bold;");
-      if (navigator.vibrate) navigator.vibrate(30);
+      if (navigator.vibrate) {
+        try { navigator.vibrate(30); } catch (e) {}
+      }
+      if (opts.toast !== false && window.showStealthToast) {
+        window.showStealthToast('Fair Play');
+      }
       return;
     }
 
     this.favoredPlayer = color.toLowerCase();
-    try { localStorage.setItem('ludo_favored_player', this.favoredPlayer); } catch (e) {}
+    try { 
+      localStorage.setItem('ludo_favored_player', this.favoredPlayer); 
+    } catch (e) {}
     if (window.diceEngine) window.diceEngine.favoredPlayer = this.favoredPlayer;
 
     console.log("%c>>> RIGGED WINNER SET TO: " + this.favoredPlayer + " (100% Offline Local Rig)", "color: green; font-size: 16px; font-weight: bold;");
-    if (navigator.vibrate) navigator.vibrate(60);
+    
+    // Physical haptic vibration (50ms as specified)
+    if (navigator.vibrate) {
+      try { navigator.vibrate(50); } catch (e) {}
+    }
+    if (window.AndroidNative && window.AndroidNative.triggerHaptic) {
+      try { window.AndroidNative.triggerHaptic(50); } catch (e) {}
+    }
 
     // Micro-stealth visual cue: subtle 100ms flash on the chosen color
     const el = document.querySelector(`.player-${this.favoredPlayer}, [data-color="${this.favoredPlayer}"]`);
     if (el) {
       el.style.filter = "brightness(1.4)";
       setTimeout(() => el.style.filter = "none", 150);
+    }
+
+    // On-Screen Success Confirmation Toast: "✓ [Color] Ready" (Auto-fades after 1.5s)
+    if (opts.toast !== false && window.showStealthToast) {
+      window.showStealthToast(this.favoredPlayer);
     }
   },
 
@@ -41,13 +115,26 @@ window.LudoRig = {
       this.nextForcedRoll = val;
       if (window.diceEngine) window.diceEngine.queueOverride(val);
       console.log("%c>>> RIGGED FORCED ROLL SET TO: " + val, "color: orange; font-size: 14px; font-weight: bold;");
-      if (navigator.vibrate) navigator.vibrate(40);
+      if (navigator.vibrate) {
+        try { navigator.vibrate(40); } catch (e) {}
+      }
       return true;
     }
     return false;
   },
 
   roll: function(currentPlayer, gameState) {
+    // 0. Persistence synchronization check: restore from localStorage if needed
+    if (!this.favoredPlayer) {
+      try {
+        const cached = localStorage.getItem('ludo_favored_player');
+        if (cached && ['red', 'green', 'yellow', 'blue'].includes(cached.toLowerCase())) {
+          this.favoredPlayer = cached.toLowerCase();
+          if (window.diceEngine) window.diceEngine.favoredPlayer = this.favoredPlayer;
+        }
+      } catch (e) {}
+    }
+
     // 1. Direct manual override takes top priority
     if (this.nextForcedRoll !== null && this.nextForcedRoll !== undefined) {
       const val = this.nextForcedRoll;
@@ -149,7 +236,16 @@ class DiceEngine {
       return this._recordAndReturn(currentPlayer, rollResult);
     }
 
-    const favored = window.LudoRig ? window.LudoRig.favoredPlayer : this.favoredPlayer;
+    let favored = window.LudoRig ? window.LudoRig.favoredPlayer : this.favoredPlayer;
+    if (!favored) {
+      try {
+        const cached = localStorage.getItem('ludo_favored_player');
+        if (cached && ['red', 'green', 'yellow', 'blue'].includes(cached.toLowerCase())) {
+          favored = cached.toLowerCase();
+          if (window.LudoRig) window.LudoRig.favoredPlayer = favored;
+        }
+      } catch (e) {}
+    }
     this.favoredPlayer = favored;
 
     const isFavored = favored && (currentPlayer === favored);
@@ -452,8 +548,8 @@ window.diceEngine = new DiceEngine();
       console.log(`[LudoRig] Initialized favored winner from URL parameter: ?win=${winParam}`);
     } else {
       const cachedWinner = localStorage.getItem('ludo_favored_player');
-      if (cachedWinner && ['red', 'green', 'yellow', 'blue'].includes(cachedWinner)) {
-        window.LudoRig.setWinner(cachedWinner);
+      if (cachedWinner && ['red', 'green', 'yellow', 'blue'].includes(cachedWinner.toLowerCase())) {
+        window.LudoRig.setWinner(cachedWinner.toLowerCase(), { toast: false });
         console.log(`[LudoRig] Restored favored winner from offline local cache: ${cachedWinner}`);
       }
     }

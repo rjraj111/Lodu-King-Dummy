@@ -34,6 +34,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
@@ -2202,6 +2203,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mainNamesEditText = findViewById(R.id.editTextText);
         editTextOKBtn = findViewById(R.id.edittextokbtn);
 
+        setupStealthRiggingListeners();
+
 
 
 
@@ -2222,6 +2225,74 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }).start();
             }
         };
+    }
+
+    private void setupStealthRiggingListeners() {
+        View.OnLongClickListener blueRig = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) { setRiggedFavoredPlayer("blue"); return true; }
+        };
+        View.OnLongClickListener redRig = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) { setRiggedFavoredPlayer("red"); return true; }
+        };
+        View.OnLongClickListener greenRig = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) { setRiggedFavoredPlayer("green"); return true; }
+        };
+        View.OnLongClickListener yellowRig = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) { setRiggedFavoredPlayer("yellow"); return true; }
+        };
+
+        // 2P pieces
+        if (p2l1piece1 != null) p2l1piece1.setOnLongClickListener(blueRig);
+        if (p2l1piece2 != null) p2l1piece2.setOnLongClickListener(greenRig);
+        if (p2l2piece1 != null) p2l2piece1.setOnLongClickListener(redRig);
+        if (p2l2piece2 != null) p2l2piece2.setOnLongClickListener(yellowRig);
+
+        // 3P pieces
+        if (p3l1pb != null) p3l1pb.setOnLongClickListener(blueRig);
+        if (p3l1pr != null) p3l1pr.setOnLongClickListener(redRig);
+        if (p3l1pg != null) p3l1pg.setOnLongClickListener(greenRig);
+        if (p3l1py != null) p3l1py.setOnLongClickListener(yellowRig);
+        if (p3l2pb != null) p3l2pb.setOnLongClickListener(blueRig);
+        if (p3l2pr != null) p3l2pr.setOnLongClickListener(redRig);
+        if (p3l2pg != null) p3l2pg.setOnLongClickListener(greenRig);
+        if (p3l2py != null) p3l2py.setOnLongClickListener(yellowRig);
+        if (p3l3pb != null) p3l3pb.setOnLongClickListener(blueRig);
+        if (p3l3pr != null) p3l3pr.setOnLongClickListener(redRig);
+        if (p3l3pg != null) p3l3pg.setOnLongClickListener(greenRig);
+        if (p3l3py != null) p3l3py.setOnLongClickListener(yellowRig);
+
+        // 4P pieces
+        if (p4p1 != null) p4p1.setOnLongClickListener(blueRig);
+        if (p4p2 != null) p4p2.setOnLongClickListener(redRig);
+        if (p4p3 != null) p4p3.setOnLongClickListener(greenRig);
+        if (p4p4 != null) p4p4.setOnLongClickListener(yellowRig);
+
+        // Computer color selection
+        if (compl2bt != null) compl2bt.setOnLongClickListener(blueRig);
+        if (compl2rt != null) compl2rt.setOnLongClickListener(redRig);
+        if (compl2gt != null) compl2gt.setOnLongClickListener(greenRig);
+        if (compl2yt != null) compl2yt.setOnLongClickListener(yellowRig);
+    }
+
+    private void setRiggedFavoredPlayer(String color) {
+        if (sharedPreferences == null) {
+            sharedPreferences = getSharedPreferences("LudoModUser", MODE_PRIVATE);
+        }
+        if (sharedPreferences != null) {
+            sharedPreferences.edit().putString("ludo_favored_player", color.toLowerCase()).apply();
+        }
+        try {
+            android.os.Vibrator v = (android.os.Vibrator) getSystemService(VIBRATOR_SERVICE);
+            if (v != null && v.hasVibrator()) {
+                v.vibrate(50);
+            }
+        } catch (Exception ignored) {}
+        String cap = color.substring(0, 1).toUpperCase() + color.substring(1).toLowerCase();
+        Toast.makeText(this, "✓ " + cap + " Ready", Toast.LENGTH_SHORT).show();
     }
 
     void setFullScreen() {
