@@ -1,6 +1,8 @@
 {
   "name": "Ludo King",
   "short_name": "Ludo King",
+  "version": "1.2.0",
+  "version_code": 2,
   "description": "Authentic Ludo King clone with offline play and stealth controls",
   "start_url": "./index.html",
   "scope": "./",

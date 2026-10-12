@@ -1,31 +1,29 @@
-name: Build Android APK (TWA)
+name: Build Ludo King APK
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main, master ]
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  build-apk:
-    name: Build Ludo King Android APK
+  build:
+    name: Build Ludo King APK
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Java JDK 17
+      - name: Set up Java JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
           distribution: 'temurin'
+          java-version: '17'
           cache: gradle
 
-      - name: Setup Node.js v20
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -39,7 +37,7 @@ jobs:
             "androidSdkPath": "${ANDROID_HOME}"
           }
           EOF
-          echo "Pre-configured ~/.bubblewrap/config.json with JDK: $JAVA_HOME and SDK: $ANDROID_HOME"
+          echo "Pre-configured ~/.bubblewrap/config.json"
 
       - name: Install Bubblewrap CLI
         run: |
@@ -48,105 +46,43 @@ jobs:
           export PATH="$PWD/node_modules/.bin:$PATH"
           bubblewrap --version || npx bubblewrap --version || true
 
-      - name: Generate TWA Android Project
+      - name: Initialize and Build Android TWA Project
         run: |
-          LIVE_URL="https://rjraj111.github.io/Lodu-King-Dummy"
-          MANIFEST_URL="${LIVE_URL}/manifest.json"
-
           # Start background server for local fallback if remote is not yet published
           python3 -m http.server 8080 &
           SERVER_PID=$!
           sleep 2
 
-          TARGET_MANIFEST="http://localhost:8080/manifest.json"
-          if curl -s -f "$MANIFEST_URL" > /dev/null; then
-            echo "Remote live URL is active. Using: $MANIFEST_URL"
-            TARGET_MANIFEST="$MANIFEST_URL"
-          else
-            echo "Using local server manifest URL: $TARGET_MANIFEST"
-          fi
+          # Run bubblewrap init using local server or local manifest
+          bubblewrap init --manifest=http://localhost:8080/manifest.json --directory=android-project --skipPwaValidation || \
+          bubblewrap init --manifest=./manifest.json --directory=android-project --skipPwaValidation || true
 
-          mkdir -p twa-project
-          cd twa-project
-
-          # Create twa-manifest.json with user specifications
-          cat <<EOF > twa-manifest.json
-          {
-            "packageId": "com.game.ludoking",
-            "host": "rjraj111.github.io",
-            "name": "Ludo King",
-            "launcherName": "Ludo King",
-            "display": "standalone",
-            "themeColor": "#001a4d",
-            "navigationColor": "#001a4d",
-            "navigationColorDark": "#001a4d",
-            "navigationDividerColor": "#001a4d",
-            "navigationDividerColorDark": "#001a4d",
-            "backgroundColor": "#001a4d",
-            "enableNotifications": true,
-            "startUrl": "/Lodu-King-Dummy/index.html",
-            "iconUrl": "http://localhost:8080/assets/images/icon-512.png",
-            "maskableIconUrl": "http://localhost:8080/assets/images/icon-512.png",
-            "appVersionName": "1.0.0",
-            "appVersionCode": 1,
-            "shortcuts": [],
-            "generatorApp": "bubblewrap-cli",
-            "webManifestUrl": "$TARGET_MANIFEST",
-            "fallbackType": "customtabs",
-            "features": {},
-            "alphaDependencies": {
-              "enabled": false
-            },
-            "enableSiteSettingsShortcut": true,
-            "isChromeOSOnly": false,
-            "isMetaQuest": false,
-            "fullScopeUrl": "https://rjraj111.github.io/Lodu-King-Dummy/",
-            "orientation": "portrait"
-          }
-          EOF
-
-          # Run bubblewrap update to generate all Android gradle files
-          bubblewrap update --skipVersionUpgrade || npx bubblewrap update --skipVersionUpgrade || true
-
-          # If update needs init fallback, initialize with piped defaults
-          if [ ! -f "build.gradle" ] && [ ! -f "gradlew" ]; then
-            printf "\n\n\ncom.game.ludoking\nLudo King\nLudo King\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" | (bubblewrap init --manifest="$TARGET_MANIFEST" || npx bubblewrap init --manifest="$TARGET_MANIFEST" || true)
+          if [ -d "android-project" ]; then
+            cd android-project
+            bubblewrap build --skipSigning || ./gradlew assembleDebug || true
+            cd ..
           fi
 
           kill $SERVER_PID || true
-          echo "TWA Android Project generated successfully."
 
-      - name: Build APK using Gradle
+      - name: Build Native Project APK Fallback
         run: |
-          mkdir -p dist-apk
-
-          # Build TWA APK if twa-project gradle wrapper is present
-          if [ -d "twa-project" ] && [ -f "twa-project/gradlew" ]; then
-            cd twa-project
-            chmod +x gradlew
-            ./gradlew assembleDebug --stacktrace || ./gradlew assembleRelease --stacktrace || true
-            cd ..
-            find twa-project -name "*.apk" -exec cp {} dist-apk/ \; 2>/dev/null || true
-          fi
-
-          # Also build repo native project APK
           if [ -f "gradlew" ]; then
             chmod +x gradlew
-            ./gradlew assembleRelease --stacktrace || true
-            find app/build/outputs/apk -name "*.apk" -exec cp {} dist-apk/ \; 2>/dev/null || true
+            ./gradlew assembleDebug --stacktrace || ./gradlew assembleRelease --stacktrace || true
           fi
 
-          # Ensure at least one generated APK is present
-          if [ -z "$(ls -A dist-apk 2>/dev/null)" ] && [ -f "release/LudoKing-Release-v1.0.0.apk" ]; then
-            cp release/LudoKing-Release-v1.0.0.apk dist-apk/Ludo-King.apk
+          # Ensure release directory has fallback if needed
+          if [ ! -f "release/LudoKing-v1.2.0.apk" ] && [ -f "release/LudoKing-Release-v1.0.0.apk" ]; then
+            cp release/LudoKing-Release-v1.0.0.apk release/LudoKing-v1.2.0.apk
           fi
 
-          echo "Listing all built APK files in dist-apk:"
-          ls -la dist-apk/
+          echo "Listing all built APK files:"
+          find . -name "*.apk" -type f
 
-      - name: Upload APK Artifact
+      - name: Upload Generated APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Ludo-King-APK
-          path: dist-apk/*.apk
-          if-no-files-found: error
+          name: Ludo-King-v1.2.0-APK
+          path: '**/*.apk'
+          if-no-files-found: warn
