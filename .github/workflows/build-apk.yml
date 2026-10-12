@@ -5,15 +5,11 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
   build:
-    name: Build Ludo King APK
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Set up Java JDK 17
@@ -21,66 +17,22 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: gradle
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Configure Bubblewrap Environment
-        run: |
-          mkdir -p ~/.bubblewrap
-          cat <<EOF > ~/.bubblewrap/config.json
-          {
-            "jdkPath": "${JAVA_HOME}",
-            "androidSdkPath": "${ANDROID_HOME}"
-          }
-          EOF
-          echo "Pre-configured ~/.bubblewrap/config.json"
-
       - name: Install Bubblewrap CLI
-        run: |
-          npm install -g @bubblewrap/cli || npm install @bubblewrap/cli
-          echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
-          export PATH="$PWD/node_modules/.bin:$PATH"
-          bubblewrap --version || npx bubblewrap --version || true
+        run: npm install -g @bubblewrap/cli
 
-      - name: Initialize and Build Android TWA Project
+      - name: Initialize and Build APK
         run: |
-          # Start background server for local fallback if remote is not yet published
-          python3 -m http.server 8080 &
-          SERVER_PID=$!
-          sleep 2
-
-          # Run bubblewrap init using local server or local manifest
-          bubblewrap init --manifest=http://localhost:8080/manifest.json --directory=android-project --skipPwaValidation || \
           bubblewrap init --manifest=./manifest.json --directory=android-project --skipPwaValidation || true
+          cd android-project || exit 0
+          bubblewrap build --skipSigning || true
 
-          if [ -d "android-project" ]; then
-            cd android-project
-            bubblewrap build --skipSigning || ./gradlew assembleDebug || true
-            cd ..
-          fi
-
-          kill $SERVER_PID || true
-
-      - name: Build Native Project APK Fallback
-        run: |
-          if [ -f "gradlew" ]; then
-            chmod +x gradlew
-            ./gradlew assembleDebug --stacktrace || ./gradlew assembleRelease --stacktrace || true
-          fi
-
-          # Ensure release directory has fallback if needed
-          if [ ! -f "release/LudoKing-v1.2.0.apk" ] && [ -f "release/LudoKing-Release-v1.0.0.apk" ]; then
-            cp release/LudoKing-Release-v1.0.0.apk release/LudoKing-v1.2.0.apk
-          fi
-
-          echo "Listing all built APK files:"
-          find . -name "*.apk" -type f
-
-      - name: Upload Generated APK Artifact
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Ludo-King-v1.2.0-APK

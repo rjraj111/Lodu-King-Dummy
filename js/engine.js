@@ -90,10 +90,10 @@ const HOME_CORRIDORS = {
 
 // Finish Goal Positions (step 56) in Center Triangle
 const FINISH_GOALS = {
-  red:    { x: 6.2, y: 7.0 },
-  green:  { x: 7.0, y: 6.2 },
+  red: { x: 6.2, y: 7.0 },
+  green: { x: 7.0, y: 6.2 },
   yellow: { x: 7.8, y: 7.0 },
-  blue:   { x: 7.0, y: 7.8 }
+  blue: { x: 7.0, y: 7.8 }
 };
 
 // Base Yard Slot Positions (step -1) matching exact layout in Image 1:
@@ -137,10 +137,10 @@ class LudoEngine {
 
     // Player configurations
     this.players = {
-      red:    { name: 'Red Player',    isAI: false, tokens: [] },
-      green:  { name: 'Green Player',  isAI: true,  tokens: [] },
-      yellow: { name: 'Yellow Player', isAI: true,  tokens: [] },
-      blue:   { name: 'Blue Player',   isAI: true,  tokens: [] }
+      red: { name: 'Red Player', isAI: false, tokens: [] },
+      green: { name: 'Green Player', isAI: true, tokens: [] },
+      yellow: { name: 'Yellow Player', isAI: true, tokens: [] },
+      blue: { name: 'Blue Player', isAI: true, tokens: [] }
     };
 
     // Initialize 4 tokens for each player
